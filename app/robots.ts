@@ -1,0 +1,11 @@
+import type { MetadataRoute } from "next";
+
+// This is a demo/concept project and must never be indexed.
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      disallow: "/",
+    },
+  };
+}

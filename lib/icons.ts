@@ -1,0 +1,52 @@
+import {
+  Hammer,
+  ChefHat,
+  DoorOpen,
+  Wrench,
+  Ruler,
+  Truck,
+  Sparkles,
+  ShieldCheck,
+  Clock,
+  Star,
+  Phone,
+  Leaf,
+  PaintBucket,
+  Scissors,
+  Stethoscope,
+  Utensils,
+  Car,
+  Home,
+  Building2,
+  HeartHandshake,
+  type LucideIcon,
+} from "lucide-react";
+
+export const iconMap = {
+  Hammer,
+  ChefHat,
+  DoorOpen,
+  Wrench,
+  Ruler,
+  Truck,
+  Sparkles,
+  ShieldCheck,
+  Clock,
+  Star,
+  Phone,
+  Leaf,
+  PaintBucket,
+  Scissors,
+  Stethoscope,
+  Utensils,
+  Car,
+  Home,
+  Building2,
+  HeartHandshake,
+} satisfies Record<string, LucideIcon>;
+
+export type IconName = keyof typeof iconMap;
+
+export function getIcon(name: string): LucideIcon {
+  return iconMap[name as IconName] ?? Sparkles;
+}
