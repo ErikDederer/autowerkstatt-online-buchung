@@ -23,9 +23,16 @@ export type Testimonial = {
 };
 
 export type Service = {
+  id: string;
   icon: string;
   title: string;
   text: string;
+  /** Numeric starting price in EUR, or null for a flat "kostenlos" service. */
+  priceFrom: number | null;
+  /** Human-readable price shown on cards, e.g. "ab 89 €" or "kostenlos". */
+  priceLabel: string;
+  /** Used to size slots in the online booking flow. */
+  durationMinutes: number;
 };
 
 export type FaqItem = {
@@ -35,17 +42,17 @@ export type FaqItem = {
 
 export const siteConfig = {
   business: {
-    name: "Schreinerei Holzwerk",
-    tagline: "Handwerk aus Meisterhand seit 1998",
-    legalName: "Holzwerk Schreinerei GmbH",
+    name: "Autowerkstatt Nord",
+    tagline: "Ihre KFZ-Werkstatt in Braunschweig – ehrlich, schnell, zuverlässig",
+    legalName: "Autowerkstatt Nord GmbH",
     // Set to null to hide the click-to-call button in the header.
-    phone: "+49 30 1234567",
-    phoneDisplay: "030 123 4567",
-    email: "info@schreinerei-holzwerk.de",
+    phone: "+495312345670",
+    phoneDisplay: "0531 234567-0",
+    email: "info@autowerkstatt-nord-bs.de",
     address: {
-      street: "Musterstraße 12",
-      zip: "10115",
-      city: "Berlin",
+      street: "Broitzemer Straße 200",
+      zip: "38102",
+      city: "Braunschweig",
     },
     social: {
       instagram: null as string | null,
@@ -54,138 +61,176 @@ export const siteConfig = {
   },
 
   seo: {
-    baseUrl: "https://schreinerei-holzwerk-demo.example",
-    defaultTitle: "Schreinerei Holzwerk – Tischlerei in Berlin",
+    baseUrl: "https://autowerkstatt-nord-demo.example",
+    defaultTitle: "Autowerkstatt Nord – KFZ-Werkstatt in Braunschweig",
     defaultDescription:
-      "Individuelle Möbel, Einbauküchen und Innenausbau vom Meisterbetrieb in Berlin. Persönliche Beratung, faire Preise, über 25 Jahre Erfahrung.",
+      "Ölwechsel, Inspektion, Reifenwechsel und mehr: Ihre Autowerkstatt in Braunschweig. Termin in wenigen Klicks online buchen – transparente Preise, geprüfte Qualität.",
     ogImage: "/og-image.jpg",
   },
 
   nav: [
     { label: "Leistungen", href: "/#leistungen" },
-    { label: "Über uns", href: "/#ueber-uns" },
     { label: "Bewertungen", href: "/#bewertungen" },
     { label: "Kontakt", href: "/#kontakt" },
   ] satisfies NavLink[],
 
+  booking: {
+    label: "Termin buchen",
+    href: "/termin",
+  },
+
   hero: {
-    headline: "Möbel, die Generationen überdauern",
+    headline: "Ihr Auto in guten Händen – mitten in Braunschweig",
     subline:
-      "Von der Einbauküche bis zum Massivholztisch: Wir fertigen individuelle Schreinerarbeiten mit Liebe zum Detail — persönlich beraten, präzise gefertigt, termintreu geliefert.",
-    ctaLabel: "Kostenlose Beratung anfragen",
-    ctaHref: "/#kontakt",
+      "Ölwechsel, Inspektion, Reifenwechsel und mehr: Wir kümmern uns um Ihr Fahrzeug — transparente Preise, ehrliche Beratung und ein eingespieltes Werkstatt-Team mit über 20 Jahren Erfahrung.",
+    ctaLabel: "Termin online buchen",
+    ctaHref: "/termin",
     secondaryCtaLabel: "Leistungen ansehen",
     secondaryCtaHref: "/#leistungen",
-    image: {
-      src: "https://picsum.photos/seed/schreinerei-hero/1200/900",
-      alt: "Handwerker bei der Arbeit an einem Massivholztisch in der Werkstatt",
-    },
+    // No stock photo fits an authentic Kfz-Werkstatt — the homepage renders
+    // a HeroVisual stats panel instead (see app/page.tsx).
+    image: null as { src: string; alt: string } | null,
   },
+
+  brands: [
+    "VW",
+    "BMW",
+    "Mercedes-Benz",
+    "Audi",
+    "Opel",
+    "Ford",
+    "Škoda",
+    "Renault",
+  ],
 
   services: [
     {
-      icon: "Hammer",
-      title: "Möbelbau nach Maß",
-      text: "Individuelle Möbelstücke aus Massivholz, exakt auf Ihren Raum und Geschmack zugeschnitten.",
+      id: "oelwechsel",
+      icon: "Droplets",
+      title: "Ölwechsel",
+      text: "Motoröl und Filter nach Herstellervorgabe – inklusive Sichtprüfung der wichtigsten Verschleißteile.",
+      priceFrom: 89,
+      priceLabel: "ab 89 €",
+      durationMinutes: 30,
     },
     {
-      icon: "ChefHat",
-      title: "Einbauküchen",
-      text: "Planung und Fertigung hochwertiger Küchen — von der ersten Skizze bis zur Montage.",
+      id: "inspektion",
+      icon: "ClipboardCheck",
+      title: "Inspektion",
+      text: "Vollständiger Check nach Herstellerplan – alle Prüfpunkte dokumentiert, damit Ihre Garantie erhalten bleibt.",
+      priceFrom: 149,
+      priceLabel: "ab 149 €",
+      durationMinutes: 90,
     },
     {
-      icon: "DoorOpen",
-      title: "Innenausbau",
-      text: "Türen, Treppen, Wandverkleidungen: Wir gestalten Innenräume mit hochwertigem Holz.",
+      id: "reifenwechsel",
+      icon: "CircleDot",
+      title: "Reifenwechsel",
+      text: "Sommer- auf Winterreifen und zurück, inklusive Wuchten und Einlagerung auf Wunsch.",
+      priceFrom: 39,
+      priceLabel: "ab 39 €",
+      durationMinutes: 30,
     },
     {
-      icon: "Wrench",
-      title: "Restaurierung",
-      text: "Antike und geerbte Möbelstücke fachgerecht aufarbeiten und für die Zukunft bewahren.",
+      id: "bremsen-check",
+      icon: "Disc",
+      title: "Bremsen-Check",
+      text: "Kostenlose Sichtprüfung von Bremsbelägen, -scheiben und Bremsflüssigkeit – für Ihre Sicherheit.",
+      priceFrom: 0,
+      priceLabel: "kostenlos",
+      durationMinutes: 20,
     },
     {
-      icon: "Ruler",
-      title: "Beratung & Planung",
-      text: "Persönliche Vor-Ort-Beratung inklusive 3D-Planung, damit Sie Ihr Ergebnis vorab sehen.",
+      id: "hu-au-vorbereitung",
+      icon: "ShieldCheck",
+      title: "HU/AU-Vorbereitung",
+      text: "Wir prüfen Ihr Fahrzeug vorab, beheben Mängel und machen es fit für den TÜV-Termin.",
+      priceFrom: 49,
+      priceLabel: "ab 49 €",
+      durationMinutes: 60,
     },
     {
-      icon: "Truck",
-      title: "Lieferung & Montage",
-      text: "Zuverlässige Lieferung und fachgerechte Montage im gesamten Berliner Raum.",
+      id: "klimaservice",
+      icon: "Snowflake",
+      title: "Klimaservice",
+      text: "Klimaanlage prüfen, befüllen und Innenraumfilter wechseln – für ein gesundes Raumklima.",
+      priceFrom: 69,
+      priceLabel: "ab 69 €",
+      durationMinutes: 45,
     },
   ] satisfies Service[],
 
   testimonials: [
     {
-      name: "Sabine Krüger",
-      role: "Privatkundin, Berlin-Charlottenburg",
+      name: "Thomas Bergmann",
+      role: "Privatkunde, Braunschweig-Weststadt",
       quote:
-        "Unsere neue Einbauküche ist ein Traum. Von der Beratung bis zur Montage war alles termintreu und sehr professionell.",
+        "Endlich eine Werkstatt, die ehrlich sagt, was wirklich nötig ist. Der Ölwechsel war günstiger als beim Vertragshändler und trotzdem top ausgeführt.",
       rating: 5,
     },
     {
-      name: "Markus Feldmann",
-      role: "Inhaber, Café Feldmann",
+      name: "Nicole Sander",
+      role: "Kundin, Braunschweig",
       quote:
-        "Der Innenausbau unseres Cafés wurde exakt nach unseren Vorstellungen umgesetzt. Absolute Empfehlung für jeden Gewerbekunden.",
+        "Termin online gebucht, zwei Tage später Reifen gewechselt – ohne Wartezeit an der Rezeption. Genau so stelle ich mir das vor.",
       rating: 5,
     },
     {
-      name: "Julia Ahrens",
-      role: "Privatkundin, Berlin-Pankow",
+      name: "Frank Kowalski",
+      role: "Inhaber, Kowalski Spedition",
       quote:
-        "Sehr freundliche Beratung und ein handwerklich makelloses Ergebnis. Unser Massivholztisch wird sicher Generationen überdauern.",
+        "Wir lassen unseren gesamten Fuhrpark hier warten. Zuverlässige Termine, faire Preise und immer ein Ansprechpartner am Telefon.",
       rating: 4,
     },
   ] satisfies Testimonial[],
 
   googleReviews: {
-    rating: 4.9,
-    reviewCount: 127,
+    rating: 4.8,
+    reviewCount: 216,
     profileUrl: "#",
   },
 
   faq: [
     {
-      question: "Wie läuft eine typische Beauftragung ab?",
+      question: "Wie funktioniert die Online-Terminbuchung?",
       answer:
-        "Nach einem unverbindlichen Erstgespräch besuchen wir Sie vor Ort, nehmen Maß und erstellen einen detaillierten Kostenvoranschlag. Nach Ihrer Freigabe fertigen wir in unserer Werkstatt und liefern termingerecht.",
+        "Wählen Sie Ihren Service, dann ein freies Datum und eine Uhrzeit aus den nächsten zwei Wochen, und hinterlassen Sie Ihre Kontaktdaten. Sie erhalten sofort eine Bestätigung mit Kalendereintrag zum Download.",
     },
     {
-      question: "Wie lange dauert die Fertigung im Durchschnitt?",
+      question: "Muss ich zum Termin etwas mitbringen?",
       answer:
-        "Je nach Umfang zwischen zwei und acht Wochen. Bei der Erstberatung nennen wir Ihnen einen verbindlichen Liefertermin.",
+        "Bitte bringen Sie den Fahrzeugschein (Zulassungsbescheinigung Teil I) und, falls vorhanden, das Serviceheft mit.",
     },
     {
-      question: "Bieten Sie auch Restaurierungen an?",
+      question: "Was passiert, wenn während der Arbeiten weitere Mängel auffallen?",
       answer:
-        "Ja, wir arbeiten antike und geerbte Möbelstücke fachgerecht auf und passen sie bei Bedarf an moderne Ansprüche an.",
+        "Wir rufen Sie an, bevor wir zusätzliche Arbeiten durchführen, und nennen Ihnen die Kosten. Es wird nichts ohne Ihre Zustimmung erledigt.",
     },
     {
-      question: "In welchen Regionen sind Sie tätig?",
+      question: "Kann ich einen gebuchten Termin ändern oder stornieren?",
       answer:
-        "Wir sind hauptsächlich in Berlin und dem Berliner Umland tätig, größere Projekte realisieren wir auch überregional.",
+        "Ja, rufen Sie uns einfach an oder schreiben Sie uns eine E-Mail – Änderungen sind bis 24 Stunden vor dem Termin problemlos möglich.",
     },
   ] satisfies FaqItem[],
 
   openingHours: [
     { days: "Montag – Freitag", hours: "08:00 – 17:00 Uhr" },
-    { days: "Samstag", hours: "09:00 – 13:00 Uhr" },
-    { days: "Sonntag", hours: "geschlossen" },
+    { days: "Mittagspause", hours: "12:00 – 13:00 Uhr" },
+    { days: "Samstag / Sonntag", hours: "geschlossen" },
   ] satisfies OpeningHoursRow[],
 
   ctaBanner: {
-    headline: "Bereit für Ihr nächstes Projekt?",
-    text: "Vereinbaren Sie jetzt ein unverbindliches Beratungsgespräch mit unserem Meisterteam.",
-    ctaLabel: "Jetzt Kontakt aufnehmen",
-    ctaHref: "/#kontakt",
+    headline: "Kein Anruf, keine Warteschleife",
+    text: "Wählen Sie Service, Datum und Uhrzeit in wenigen Klicks. Sie erhalten sofort eine Bestätigung mit Kalendereintrag.",
+    ctaLabel: "Termin buchen",
+    ctaHref: "/termin",
   },
 
   legal: {
     representative: "[Vorname Nachname]",
     street: "[Straße Nr.]",
     zipCity: "[PLZ Ort]",
-    registerCourt: "[Registergericht]",
+    registerCourt: "Amtsgericht Braunschweig",
     registerNumber: "[Registernummer]",
     vatId: "[USt-IdNr.]",
     responsibleForContent: "[Vorname Nachname]",

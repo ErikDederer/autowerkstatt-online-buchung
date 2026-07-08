@@ -10,6 +10,8 @@ export type HeroProps = {
   secondaryCtaLabel?: string;
   secondaryCtaHref?: string;
   image?: { src: string; alt: string } | null;
+  /** Custom right-column visual, rendered instead of `image` when provided. */
+  visual?: React.ReactNode;
 };
 
 export function Hero({
@@ -20,6 +22,7 @@ export function Hero({
   secondaryCtaLabel = siteConfig.hero.secondaryCtaLabel,
   secondaryCtaHref = siteConfig.hero.secondaryCtaHref,
   image = siteConfig.hero.image,
+  visual,
 }: HeroProps) {
   return (
     <section className="border-b bg-secondary/40">
@@ -48,18 +51,19 @@ export function Hero({
           </div>
         </div>
 
-        {image && (
-          <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl lg:aspect-square">
-            <Image
-              src={image.src}
-              alt={image.alt}
-              fill
-              priority
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              className="object-cover"
-            />
-          </div>
-        )}
+        {visual ??
+          (image && (
+            <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl lg:aspect-square">
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                priority
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          ))}
       </div>
     </section>
   );

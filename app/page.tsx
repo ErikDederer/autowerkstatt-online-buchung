@@ -1,5 +1,7 @@
 import { Header } from "@/components/blocks/header";
 import { Hero } from "@/components/blocks/hero";
+import { HeroVisual } from "@/components/blocks/hero-visual";
+import { BrandStrip } from "@/components/blocks/brand-strip";
 import { GoogleReviewsBadge } from "@/components/blocks/google-reviews-badge";
 import { ServicesGrid } from "@/components/blocks/services-grid";
 import { TestimonialsSection } from "@/components/blocks/testimonials-section";
@@ -13,7 +15,8 @@ export default function Home() {
     <>
       <Header />
       <main className="flex-1">
-        <Hero />
+        <Hero visual={<HeroVisual />} />
+        <BrandStrip />
         <div className="flex justify-center py-10">
           <GoogleReviewsBadge />
         </div>

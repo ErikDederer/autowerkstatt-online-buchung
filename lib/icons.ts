@@ -19,6 +19,12 @@ import {
   Home,
   Building2,
   HeartHandshake,
+  Droplets,
+  ClipboardCheck,
+  CircleDot,
+  Disc,
+  Snowflake,
+  Gauge,
   type LucideIcon,
 } from "lucide-react";
 
@@ -43,6 +49,12 @@ export const iconMap = {
   Home,
   Building2,
   HeartHandshake,
+  Droplets,
+  ClipboardCheck,
+  CircleDot,
+  Disc,
+  Snowflake,
+  Gauge,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof iconMap;

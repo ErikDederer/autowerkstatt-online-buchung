@@ -82,7 +82,26 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-base font-semibold">4. Weitergabe von Daten</h2>
+              <h2 className="text-base font-semibold">4. Online-Terminbuchung</h2>
+              <p className="mt-2">
+                Über den Buchungsassistenten unter „Termin buchen“ erheben
+                wir die von Ihnen angegebenen Daten (Name, E-Mail-Adresse,
+                Telefonnummer sowie die gewählte Leistung, Datum und
+                Uhrzeit) zum Zweck der Terminvereinbarung und -bestätigung.
+                Die Verarbeitung erfolgt auf Grundlage Ihrer Einwilligung
+                (Art. 6 Abs. 1 lit. a DSGVO).
+              </p>
+              <p className="mt-2">
+                Dieses Projekt ist eine Konzept-Website ohne angebundenes
+                Backend: Terminanfragen werden aktuell nicht dauerhaft
+                gespeichert oder an Dritte übermittelt. Der optional
+                herunterladbare Kalendereintrag (.ics-Datei) wird
+                ausschließlich lokal in Ihrem Browser erzeugt.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-base font-semibold">5. Weitergabe von Daten</h2>
               <p className="mt-2">
                 Eine Übermittlung Ihrer personenbezogenen Daten an Dritte
                 findet nicht statt, es sei denn, wir sind gesetzlich dazu
@@ -91,7 +110,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-base font-semibold">5. Ihre Rechte</h2>
+              <h2 className="text-base font-semibold">6. Ihre Rechte</h2>
               <p className="mt-2">Sie haben jederzeit das Recht auf:</p>
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>Auskunft über Ihre bei uns gespeicherten Daten (Art. 15 DSGVO)</li>
@@ -109,7 +128,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="text-base font-semibold">6. SSL-/TLS-Verschlüsselung</h2>
+              <h2 className="text-base font-semibold">7. SSL-/TLS-Verschlüsselung</h2>
               <p className="mt-2">
                 Diese Website nutzt aus Sicherheitsgründen eine SSL-/TLS-
                 Verschlüsselung zur Übertragung vertraulicher Inhalte, wie
@@ -121,7 +140,7 @@ export default function DatenschutzPage() {
 
             <section>
               <h2 className="text-base font-semibold">
-                7. Aktualität und Änderung dieser Datenschutzerklärung
+                8. Aktualität und Änderung dieser Datenschutzerklärung
               </h2>
               <p className="mt-2">
                 Diese Datenschutzerklärung ist aktuell gültig. Durch die

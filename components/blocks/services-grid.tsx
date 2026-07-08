@@ -1,3 +1,4 @@
+import { Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getIcon } from "@/lib/icons";
 import { siteConfig, type Service } from "@/lib/site-config";
@@ -12,7 +13,7 @@ export type ServicesGridProps = {
 export function ServicesGrid({
   id = "leistungen",
   eyebrow = "Unsere Leistungen",
-  title = "Handwerk, auf das Sie sich verlassen können",
+  title = "Service, auf den Sie sich verlassen können",
   services = siteConfig.services,
 }: ServicesGridProps) {
   return (
@@ -30,18 +31,27 @@ export function ServicesGrid({
         {services.map((service) => {
           const Icon = getIcon(service.icon);
           return (
-            <Card key={service.title} className="h-full">
+            <Card key={service.id} className="h-full">
               <CardContent className="flex h-full flex-col gap-4">
-                <div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Icon className="size-5" aria-hidden="true" />
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </div>
+                  <span className="rounded-full bg-primary px-2.5 py-1 font-mono text-xs font-semibold text-primary-foreground">
+                    {service.priceLabel}
+                  </span>
                 </div>
                 <div>
-                  <h3 className="font-heading text-lg font-semibold">
+                  <h3 className="font-heading text-lg font-semibold uppercase tracking-wide">
                     {service.title}
                   </h3>
                   <p className="mt-2 text-sm text-muted-foreground">
                     {service.text}
                   </p>
+                </div>
+                <div className="mt-auto flex items-center gap-1.5 pt-2 text-xs text-muted-foreground">
+                  <Clock className="size-3.5" aria-hidden="true" />
+                  ca. {service.durationMinutes} Min.
                 </div>
               </CardContent>
             </Card>

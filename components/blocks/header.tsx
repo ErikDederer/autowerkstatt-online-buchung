@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone } from "lucide-react";
+import { CalendarDays, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeaderMobileNav } from "@/components/blocks/header-mobile-nav";
 import { siteConfig, type NavLink } from "@/lib/site-config";
@@ -12,6 +12,8 @@ export type HeaderProps = {
   /** E.164-ish phone number used for the tel: link. Set to null to hide the call button. */
   phone?: string | null;
   phoneDisplay?: string;
+  bookingLabel?: string;
+  bookingHref?: string;
 };
 
 export function Header({
@@ -20,10 +22,13 @@ export function Header({
   nav = siteConfig.nav,
   phone = siteConfig.business.phone,
   phoneDisplay = siteConfig.business.phoneDisplay,
+  bookingLabel = siteConfig.booking.label,
+  bookingHref = siteConfig.booking.href,
 }: HeaderProps) {
   const callButton = phone ? (
     <Button
       size="lg"
+      variant="outline"
       className="w-full gap-2 sm:w-auto"
       nativeButton={false}
       render={
@@ -35,10 +40,24 @@ export function Header({
     />
   ) : null;
 
+  const bookingButton = (
+    <Button
+      size="lg"
+      className="w-full gap-2 sm:w-auto"
+      nativeButton={false}
+      render={
+        <Link href={bookingHref}>
+          <CalendarDays className="size-4" />
+          {bookingLabel}
+        </Link>
+      }
+    />
+  );
+
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/" className="shrink-0 font-heading text-xl font-semibold tracking-tight">
+        <Link href="/" className="shrink-0 font-heading text-xl font-semibold uppercase tracking-tight">
           {logo ?? businessName}
         </Link>
 
@@ -57,9 +76,20 @@ export function Header({
           </ul>
         </nav>
 
-        <div className="hidden md:block">{callButton}</div>
+        <div className="hidden items-center gap-3 md:flex">
+          {callButton}
+          {bookingButton}
+        </div>
 
-        <HeaderMobileNav nav={nav} callToAction={callButton} />
+        <HeaderMobileNav
+          nav={nav}
+          callToAction={
+            <div className="flex flex-col gap-3">
+              {bookingButton}
+              {callButton}
+            </div>
+          }
+        />
       </div>
     </header>
   );
