@@ -191,7 +191,7 @@ export function StepContact({
               />
               <Label
                 htmlFor="booking-consent"
-                className="text-sm font-normal leading-snug text-muted-foreground"
+                className="block text-sm font-normal leading-snug text-muted-foreground"
               >
                 Ich stimme zu, dass meine Angaben zur Bearbeitung meiner Terminanfrage
                 gemäß der{" "}

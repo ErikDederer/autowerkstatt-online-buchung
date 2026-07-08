@@ -127,7 +127,7 @@ export function ContactForm() {
               onCheckedChange={(checked) => field.onChange(checked === true)}
               aria-invalid={!!errors.consent}
             />
-            <Label htmlFor="consent" className="text-sm font-normal leading-snug text-muted-foreground">
+            <Label htmlFor="consent" className="block text-sm font-normal leading-snug text-muted-foreground">
               Ich stimme zu, dass meine Angaben zur Bearbeitung meiner Anfrage
               gemäß der{" "}
               <a href="/datenschutz" className="underline underline-offset-2 hover:text-foreground">
