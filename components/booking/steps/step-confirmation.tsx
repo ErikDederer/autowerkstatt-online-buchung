@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, CheckCircle2, Clock, Download } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock, Download, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildIcsContent, downloadIcsFile } from "@/lib/booking/ics";
 import { formatFullDateLabel, parseDateISO } from "@/lib/booking/slots";
@@ -31,9 +31,13 @@ export function StepConfirmation({
 
     const content = buildIcsContent({
       title: `${service.title} – ${siteConfig.business.name}`,
-      description: `Termin für ${service.title} bei ${siteConfig.business.name}.${
-        contact.notes ? `\nAnmerkung: ${contact.notes}` : ""
-      }`,
+      description: [
+        `Termin für ${service.title} bei ${siteConfig.business.name}.`,
+        `Fahrzeug: ${contact.vehicleMake} ${contact.vehicleModel}, ${contact.mileageKm} km`,
+        contact.notes ? `Anmerkung: ${contact.notes}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n"),
       location: `${street}, ${zip} ${city}`,
       start,
       durationMinutes: service.durationMinutes,
@@ -68,6 +72,15 @@ export function StepConfirmation({
         <div className="flex items-center gap-1.5 font-mono text-muted-foreground">
           <Clock className="size-3.5" aria-hidden="true" />
           {time} Uhr
+        </div>
+        <div className="flex items-center justify-between gap-3 border-t pt-2 text-muted-foreground">
+          <span>
+            {contact.vehicleMake} {contact.vehicleModel}
+          </span>
+          <span className="flex items-center gap-1.5 font-mono">
+            <Gauge className="size-3.5" aria-hidden="true" />
+            {Number(contact.mileageKm).toLocaleString("de-DE")} km
+          </span>
         </div>
       </div>
 

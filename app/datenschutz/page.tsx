@@ -86,10 +86,17 @@ export default function DatenschutzPage() {
               <p className="mt-2">
                 Über den Buchungsassistenten unter „Termin buchen“ erheben
                 wir die von Ihnen angegebenen Daten (Name, E-Mail-Adresse,
-                Telefonnummer sowie die gewählte Leistung, Datum und
-                Uhrzeit) zum Zweck der Terminvereinbarung und -bestätigung.
-                Die Verarbeitung erfolgt auf Grundlage Ihrer Einwilligung
-                (Art. 6 Abs. 1 lit. a DSGVO).
+                Telefonnummer, Fahrzeugdaten und Kilometerstand sowie die
+                gewählte Leistung, Datum und Uhrzeit) zum Zweck der
+                Terminvereinbarung und -bestätigung. Die Verarbeitung
+                erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1
+                lit. a DSGVO).
+              </p>
+              <p className="mt-2">
+                Die optionale Erkennung per KBA-Schlüsselnummer (HSN/TSN)
+                läuft vollständig lokal in Ihrem Browser gegen eine kleine
+                Beispieldatenbank und überträgt keine Daten an Dritte oder
+                an das Kraftfahrt-Bundesamt.
               </p>
               <p className="mt-2">
                 Dieses Projekt ist eine Konzept-Website ohne angebundenes

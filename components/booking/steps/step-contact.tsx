@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { WizardNav } from "@/components/booking/wizard-nav";
+import { HsnTsnLookup } from "@/components/booking/hsn-tsn-lookup";
 import { bookingContactSchema, type BookingContactValues } from "@/lib/validations/booking";
 import { submitBookingRequest } from "@/lib/actions/booking";
 import { formatFullDateLabel } from "@/lib/booking/slots";
@@ -28,6 +29,9 @@ const defaultValues: BookingContactValues = {
   name: "",
   email: "",
   phone: "",
+  vehicleMake: "",
+  vehicleModel: "",
+  mileageKm: "",
   notes: "",
   consent: false,
   website: "",
@@ -48,6 +52,7 @@ export function StepContact({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<BookingContactValues>({
     resolver: zodResolver(bookingContactSchema),
@@ -154,7 +159,67 @@ export function StepContact({
           {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-4 border-t pt-5">
+          <h3 className="text-sm font-semibold uppercase tracking-wide">Fahrzeugdaten</h3>
+
+          <HsnTsnLookup
+            onDecoded={({ make, model }) => {
+              setValue("vehicleMake", make, { shouldValidate: true });
+              setValue("vehicleModel", model, { shouldValidate: true });
+            }}
+          />
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="booking-vehicle-make">Marke</Label>
+              <Input
+                id="booking-vehicle-make"
+                placeholder="z. B. Volkswagen"
+                aria-invalid={!!errors.vehicleMake}
+                {...register("vehicleMake")}
+              />
+              {errors.vehicleMake && (
+                <p className="text-sm text-destructive">{errors.vehicleMake.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="booking-vehicle-model">Modell</Label>
+              <Input
+                id="booking-vehicle-model"
+                placeholder="z. B. Golf VII"
+                aria-invalid={!!errors.vehicleModel}
+                {...register("vehicleModel")}
+              />
+              {errors.vehicleModel && (
+                <p className="text-sm text-destructive">{errors.vehicleModel.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="booking-mileage">Kilometerstand</Label>
+            <div className="relative">
+              <Input
+                id="booking-mileage"
+                type="text"
+                inputMode="numeric"
+                placeholder="z. B. 128000"
+                aria-invalid={!!errors.mileageKm}
+                className="pr-10"
+                {...register("mileageKm")}
+              />
+              <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-sm text-muted-foreground">
+                km
+              </span>
+            </div>
+            {errors.mileageKm && (
+              <p className="text-sm text-destructive">{errors.mileageKm.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2 border-t pt-5">
           <Label htmlFor="booking-notes">Anmerkungen (optional)</Label>
           <Textarea
             id="booking-notes"

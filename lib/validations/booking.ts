@@ -19,6 +19,24 @@ export const bookingRequestSchema = z.object({
     .trim()
     .min(6, "Bitte geben Sie eine Telefonnummer ein, damit wir Sie erreichen können.")
     .max(30, "Die Telefonnummer ist zu lang."),
+  vehicleMake: z
+    .string()
+    .trim()
+    .min(1, "Bitte geben Sie die Fahrzeugmarke an.")
+    .max(60, "Die Markenbezeichnung ist zu lang."),
+  vehicleModel: z
+    .string()
+    .trim()
+    .min(1, "Bitte geben Sie das Fahrzeugmodell an.")
+    .max(60, "Die Modellbezeichnung ist zu lang."),
+  // Kept as a digit string (not coerced to number) so the schema's inferred
+  // type matches the text input's raw value with no input/output split.
+  mileageKm: z
+    .string()
+    .trim()
+    .min(1, "Bitte geben Sie den Kilometerstand an.")
+    .refine((val) => /^\d+$/.test(val), "Bitte geben Sie eine gültige Zahl ein.")
+    .refine((val) => Number(val) <= 999999, "Bitte prüfen Sie den Kilometerstand."),
   notes: z.string().trim().max(500, "Ihre Anmerkung ist zu lang.").optional().or(z.literal("")),
   consent: z.boolean().refine((val) => val === true, {
     message: "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
@@ -33,6 +51,9 @@ export const bookingContactSchema = bookingRequestSchema.pick({
   name: true,
   email: true,
   phone: true,
+  vehicleMake: true,
+  vehicleModel: true,
+  mileageKm: true,
   notes: true,
   consent: true,
   website: true,
