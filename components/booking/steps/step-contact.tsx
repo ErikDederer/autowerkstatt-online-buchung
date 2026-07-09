@@ -31,6 +31,7 @@ const defaultValues: BookingContactValues = {
   phone: "",
   vehicleMake: "",
   vehicleModel: "",
+  licensePlate: "",
   mileageKm: "",
   notes: "",
   consent: false,
@@ -197,25 +198,41 @@ export function StepContact({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="booking-mileage">Kilometerstand</Label>
-            <div className="relative">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="booking-license-plate">Kennzeichen</Label>
               <Input
-                id="booking-mileage"
-                type="text"
-                inputMode="numeric"
-                placeholder="z. B. 128000"
-                aria-invalid={!!errors.mileageKm}
-                className="pr-10"
-                {...register("mileageKm")}
+                id="booking-license-plate"
+                placeholder="z. B. BS-AB 123"
+                className="uppercase"
+                aria-invalid={!!errors.licensePlate}
+                {...register("licensePlate")}
               />
-              <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-sm text-muted-foreground">
-                km
-              </span>
+              {errors.licensePlate && (
+                <p className="text-sm text-destructive">{errors.licensePlate.message}</p>
+              )}
             </div>
-            {errors.mileageKm && (
-              <p className="text-sm text-destructive">{errors.mileageKm.message}</p>
-            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="booking-mileage">Kilometerstand</Label>
+              <div className="relative">
+                <Input
+                  id="booking-mileage"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="z. B. 128000"
+                  aria-invalid={!!errors.mileageKm}
+                  className="pr-10"
+                  {...register("mileageKm")}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center text-sm text-muted-foreground">
+                  km
+                </span>
+              </div>
+              {errors.mileageKm && (
+                <p className="text-sm text-destructive">{errors.mileageKm.message}</p>
+              )}
+            </div>
           </div>
         </div>
 

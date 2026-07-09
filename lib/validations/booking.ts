@@ -29,6 +29,16 @@ export const bookingRequestSchema = z.object({
     .trim()
     .min(1, "Bitte geben Sie das Fahrzeugmodell an.")
     .max(60, "Die Modellbezeichnung ist zu lang."),
+  licensePlate: z
+    .string()
+    .trim()
+    .min(4, "Bitte geben Sie ein gültiges Kennzeichen an.")
+    .max(12, "Das Kennzeichen ist zu lang.")
+    .regex(
+      /^[A-ZÄÖÜ0-9- ]+$/i,
+      "Bitte geben Sie ein Kennzeichen ohne Sonderzeichen an, z. B. BS-AB 123."
+    )
+    .transform((val) => val.toUpperCase()),
   // Kept as a digit string (not coerced to number) so the schema's inferred
   // type matches the text input's raw value with no input/output split.
   mileageKm: z
@@ -53,6 +63,7 @@ export const bookingContactSchema = bookingRequestSchema.pick({
   phone: true,
   vehicleMake: true,
   vehicleModel: true,
+  licensePlate: true,
   mileageKm: true,
   notes: true,
   consent: true,
