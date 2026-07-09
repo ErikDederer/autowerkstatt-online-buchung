@@ -33,27 +33,33 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 Der Buchungsassistent unter `/termin` schreibt Terminanfragen per
 Supabase-Server-Client in die Tabelle `booking_requests`. WerkPlan
-(die geplante Werkstattverwaltung, die diese Anfragen anzeigen und
-bearbeiten wird) existiert noch nicht — die Migration in
-`supabase/migrations/0001_booking_requests.sql` ist deshalb aktuell
-der Vertrag, den WerkPlan bei seiner Entstehung erfüllen muss, nicht
-umgekehrt. Ändert sich das Schema auf einer Seite, muss die andere
-nachgezogen werden.
+(`../werkplan`, die Werkstattverwaltung, die diese Anfragen live anzeigt
+und annimmt/ablehnt) existiert inzwischen und teilt sich mit dieser
+Seite ein Supabase-Projekt. Beide Migrationen —
+`supabase/migrations/0001_booking_requests.sql` hier und
+`werkplan/drizzle/0000_*.sql` dort — legen dieselbe Tabelle mit
+`CREATE TABLE IF NOT EXISTS` an, sodass es egal ist, welche zuerst
+gegen das gemeinsame Projekt läuft. Ändert sich das Schema auf einer
+Seite, muss die andere nachgezogen werden.
 
 **Setup:**
 
 1. Supabase-Projekt anlegen (oder das gemeinsame Projekt verwenden,
-   sobald es existiert).
+   das WerkPlan bereits nutzt).
 2. Migration `supabase/migrations/0001_booking_requests.sql` gegen
    das Projekt laufen lassen (z. B. über die Supabase SQL-Konsole oder
-   die Supabase CLI).
+   die Supabase CLI) — falls WerkPlans Migration dort bereits lief,
+   ist dieser Schritt ein No-op.
 3. `.env.example` nach `.env.local` kopieren und `SUPABASE_URL` sowie
    `SUPABASE_SERVICE_ROLE_KEY` mit den echten Projektwerten füllen.
-   Der Service-Role-Key umgeht Row Level Security — er wird
-   ausschließlich serverseitig in `lib/supabase/admin.ts` gelesen
-   (importiert nur von `"use server"`-Dateien) und darf **nie** mit
-   `NEXT_PUBLIC_` präfixiert oder in eine Client-Komponente importiert
-   werden.
+   `SUPABASE_URL` ist die REST-API-URL des Projekts
+   (`https://xxxxx.supabase.co`, zu finden unter Project Settings ->
+   API -> Project URL) — **keine** Postgres-Connection-String, die
+   braucht WerkPlan separat für seine Drizzle-Verbindung. Der
+   Service-Role-Key umgeht Row Level Security — er wird ausschließlich
+   serverseitig in `lib/supabase/admin.ts` gelesen (importiert nur von
+   `"use server"`-Dateien) und darf **nie** mit `NEXT_PUBLIC_`
+   präfixiert oder in eine Client-Komponente importiert werden.
 
 **Service-Slugs:** `service_type` verwendet dieselben IDs wie
 `lib/site-config.ts` (`oelwechsel`, `inspektion`, `reifenwechsel`,

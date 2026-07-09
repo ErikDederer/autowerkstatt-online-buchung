@@ -1,10 +1,10 @@
 -- booking_requests
 --
 -- Schema contract between this site (autowerkstatt-online-buchung) and
--- WerkPlan. WerkPlan does not exist yet, so this migration is the
--- source of truth WerkPlan needs to match when it's built — not the
--- other way around. If WerkPlan's real schema ends up differing,
--- update it here first and re-sync both sides.
+-- WerkPlan (../werkplan). Both repos' migrations create this table with
+-- CREATE TABLE IF NOT EXISTS so either can run first against the shared
+-- project. If the schema changes on one side, update it here (or in
+-- werkplan/drizzle/schema.ts) first and re-sync both sides.
 --
 -- Column names for customer_name, phone, vehicle_make, vehicle_model,
 -- license_plate, service_type, requested_date, requested_slot,
