@@ -29,6 +29,48 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Verbindung zu WerkPlan
+
+Der Buchungsassistent unter `/termin` schreibt Terminanfragen per
+Supabase-Server-Client in die Tabelle `booking_requests`. WerkPlan
+(die geplante Werkstattverwaltung, die diese Anfragen anzeigen und
+bearbeiten wird) existiert noch nicht — die Migration in
+`supabase/migrations/0001_booking_requests.sql` ist deshalb aktuell
+der Vertrag, den WerkPlan bei seiner Entstehung erfüllen muss, nicht
+umgekehrt. Ändert sich das Schema auf einer Seite, muss die andere
+nachgezogen werden.
+
+**Setup:**
+
+1. Supabase-Projekt anlegen (oder das gemeinsame Projekt verwenden,
+   sobald es existiert).
+2. Migration `supabase/migrations/0001_booking_requests.sql` gegen
+   das Projekt laufen lassen (z. B. über die Supabase SQL-Konsole oder
+   die Supabase CLI).
+3. `.env.example` nach `.env.local` kopieren und `SUPABASE_URL` sowie
+   `SUPABASE_SERVICE_ROLE_KEY` mit den echten Projektwerten füllen.
+   Der Service-Role-Key umgeht Row Level Security — er wird
+   ausschließlich serverseitig in `lib/supabase/admin.ts` gelesen
+   (importiert nur von `"use server"`-Dateien) und darf **nie** mit
+   `NEXT_PUBLIC_` präfixiert oder in eine Client-Komponente importiert
+   werden.
+
+**Service-Slugs:** `service_type` verwendet dieselben IDs wie
+`lib/site-config.ts` (`oelwechsel`, `inspektion`, `reifenwechsel`,
+`bremsen-check`, `hu-au-vorbereitung`, `klimaservice`). WerkPlan muss
+diese Slugs übernehmen.
+
+**Rate-Limiting:** `lib/booking/rate-limit.ts` begrenzt Anfragen pro
+IP auf 3 pro Stunde. Das ist ein einfacher In-Memory-Zähler ohne
+gemeinsamen Zustand über mehrere Serverinstanzen hinweg — ausreichend
+gegen ein naives Zuspammen des Demo-Postfachs, aber kein Ersatz für
+einen echten Limiter (z. B. Upstash), falls das Formular einmal
+öffentlich stärker frequentiert wird.
+
+**Ohne gesetzte Umgebungsvariablen** schlägt die Buchung serverseitig
+kontrolliert fehl (verständliche Fehlermeldung für den Nutzer, Detail
+landet nur im Server-Log) — die Seite stürzt nicht ab.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

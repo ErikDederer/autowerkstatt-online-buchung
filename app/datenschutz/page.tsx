@@ -99,11 +99,20 @@ export default function DatenschutzPage() {
                 an das Kraftfahrt-Bundesamt.
               </p>
               <p className="mt-2">
-                Dieses Projekt ist eine Konzept-Website ohne angebundenes
-                Backend: Terminanfragen werden aktuell nicht dauerhaft
-                gespeichert oder an Dritte übermittelt. Der optional
-                herunterladbare Kalendereintrag (.ics-Datei) wird
-                ausschließlich lokal in Ihrem Browser erzeugt.
+                Ihre Terminanfrage wird in einer Datenbank (Supabase,
+                PostgreSQL) gespeichert und ist ausschließlich für die
+                Werkstattverwaltung zugänglich. Eine Weitergabe an
+                sonstige Dritte findet nicht statt.{" "}
+                <span className="text-muted-foreground">
+                  [Hinweis für den Betreiber: Vor dem Live-Betrieb einen
+                  Auftragsverarbeitungsvertrag mit Supabase abschließen
+                  und den Serverstandort hier ergänzen.]
+                </span>
+              </p>
+              <p className="mt-2">
+                Der optional herunterladbare Kalendereintrag (.ics-Datei)
+                wird ausschließlich lokal in Ihrem Browser erzeugt und
+                nicht an uns übertragen.
               </p>
             </section>
 
