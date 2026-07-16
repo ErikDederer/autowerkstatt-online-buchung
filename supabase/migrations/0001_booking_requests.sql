@@ -59,9 +59,27 @@ create index if not exists booking_requests_requested_date_idx
 create index if not exists booking_requests_status_idx
   on booking_requests (status);
 
--- RLS is enabled with no public policies: only the service-role key
--- (used exclusively server-side in lib/actions/booking.ts) can write,
--- since the service role bypasses RLS entirely. WerkPlan will need to
--- add its own SELECT/UPDATE policies for its authenticated admin
--- users once it exists.
+-- Writes only ever go through the service-role key (this repo's
+-- lib/actions/booking.ts), which bypasses RLS entirely. The anon
+-- SELECT policy below exists solely so WerkPlan's browser-side
+-- Realtime subscription (the "Neue Anfragen" inbox) can receive
+-- postgres_changes events for this table — Realtime respects RLS for
+-- the anon key. This is intentionally open because the demo has no
+-- auth; a production version would scope it to authenticated workshop
+-- staff. Matches werkplan/drizzle/0000_*.sql exactly so either
+-- migration produces the same end state.
 alter table booking_requests enable row level security;
+
+drop policy if exists "Demo: allow anon select for realtime" on booking_requests;
+create policy "Demo: allow anon select for realtime"
+  on booking_requests for select to anon using (true);
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and tablename = 'booking_requests'
+  ) then
+    alter publication supabase_realtime add table booking_requests;
+  end if;
+end $$;
