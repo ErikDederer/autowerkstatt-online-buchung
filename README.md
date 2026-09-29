@@ -12,7 +12,7 @@ Deutschsprachiges Portfolio-Projekt für eine Werkstatt-Website mit mehrstufiger
 - Kleine lokale HSN/TSN-Beispieltabelle zur Fahrzeugauswahl.
 - Gemeinsames Datenmodell für die Weiterverarbeitung in WerkPlan.
 
-**Eine Terminanfrage ist keine verbindliche Buchung.** Die angezeigten Zeitfenster werden lokal simuliert und berücksichtigen keine bestehenden Werkstatttermine. E-Mail-Versand und SMS-Erinnerungen sind nicht implementiert. Die separate Kontaktform protokolliert Eingaben nur im Server-Log und versendet keine Nachricht.
+**Eine Terminanfrage ist keine verbindliche Buchung.** Die angezeigten Zeitfenster werden lokal simuliert und berücksichtigen keine bestehenden Werkstatttermine. E-Mail-Versand und SMS-Erinnerungen sind nicht implementiert. Die separate Kontaktform prüft Eingaben als Demo, speichert oder protokolliert sie nicht und versendet keine Nachricht.
 
 ## Technik
 
@@ -42,10 +42,10 @@ Die Website schreibt Anfragen in `booking_requests`; WerkPlan ist die zugehörig
 
 ### Demo-Datenbank konfigurieren
 
-**Nur eine isolierte Demo-Datenbank mit erfundenen Daten verwenden.** Die vorhandene Migration erlaubt der Rolle `anon` das Lesen aller Buchungsanfragen für WerkPlans Demo-Realtime-Anbindung. Damit schützt diese Richtlinie die Kundendaten nicht vor anonymem Zugriff. Vor Verwendung realer Daten muss der Lesezugriff in beiden Anwendungen auf berechtigte Werkstattmitarbeiter beschränkt werden.
+**Nur eine isolierte Demo-Datenbank mit erfundenen Daten verwenden.** Die Zugriffsmigration `supabase/migrations/0002_server_only_access.sql` sperrt direkte Zugriffe der Rollen `anon` und `authenticated` auf die gemeinsamen Arbeitstabellen. WerkPlan benötigt die geschützte Serverversion mit Mitarbeiteranmeldung. Eine alte, ungeschützte WerkPlan-Version kann Daten weiterhin über ihren privilegierten Serverzugriff offenlegen.
 
 1. Eine isolierte Supabase-Demo-Datenbank bereitstellen.
-2. `supabase/migrations/0001_booking_requests.sql` prüfen und dort ausführen. `CREATE TABLE IF NOT EXISTS` gleicht eine bereits vorhandene Tabelle nicht automatisch an: bei Nutzung mit WerkPlan das tatsächliche Schema separat vergleichen.
+2. `supabase/migrations/0001_booking_requests.sql` und anschließend `supabase/migrations/0002_server_only_access.sql` prüfen und dort ausführen. `CREATE TABLE IF NOT EXISTS` gleicht eine bereits vorhandene Tabelle nicht automatisch an: bei Nutzung mit WerkPlan das tatsächliche Schema separat vergleichen.
 3. In `.env.local` die beiden Server-Variablen setzen:
 
 | Variable | Bedeutung |
@@ -84,8 +84,8 @@ npm run build
 
 ## Grenzen und nächste Schritte
 
-- Anonymer Datenbank-Lesezugriff muss vor realer Nutzung entfernt und durch berechtigungsgebundenen Zugriff ersetzt werden.
-- Die Kontaktform schreibt personenbezogene Eingaben ins Server-Log; für eine öffentliche Demo sind ein klarer Demohinweis und ein Umgang ohne solche Logs erforderlich.
+- Die Datenbank sperrt direkte Browser-Zugriffe; vor realer Nutzung die geschützte WerkPlan-Version ausrollen und alte öffentliche Deployments sperren.
+- Die Kontaktform bleibt eine ausdrücklich gekennzeichnete Demo ohne Speicherung, Protokollierung oder Versand.
 - Rate-Limiting erfolgt nur im Arbeitsspeicher einer Instanz (3 Anfragen je IP und Stunde); es ist nicht zwischen Instanzen geteilt.
 - Datum und Uhrzeit brauchen zusätzliche serverseitige Prüfung gegen erlaubte Termine; es gibt keine echte Kapazitätsreservierung.
 - Geschäftsdaten, Bewertungen und Rechtstexte sind Beispielinhalte und keine veröffentlichungsfertigen Angaben.
