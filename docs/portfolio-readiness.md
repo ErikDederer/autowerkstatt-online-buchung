@@ -40,3 +40,9 @@ Description: German workshop booking demo with Next.js, TypeScript and Supabase;
 Topics: `nextjs`, `typescript`, `react`, `tailwindcss`, `supabase`, `booking`, `portfolio`
 
 These are suggestions only; repository settings were not changed.
+
+## Access-control remediation (2026-09-29)
+
+The findings above describe the original reviewed commit. Migration `0002_server_only_access.sql` now denies direct browser/API access to all existing shared work tables, including older mobile-demo policies. The same lockdown was applied to the shared Supabase database and table privileges were verified; service_role insertion was tested in a rolled-back transaction. The contact action no longer logs submitted personal data and explicitly reports demo-only behavior.
+
+Database restrictions alone do not secure the old WerkPlan server: deploy its staff-authentication changes and restrict historical public deployments. Staff login setup and live application verification remain separate deployment steps.

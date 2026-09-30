@@ -19,7 +19,7 @@ export async function submitContactForm(
     };
   }
 
-  const { website, ...data } = parsed.data;
+  const { website } = parsed.data;
 
   // Honeypot triggered: report success to the bot without processing anything.
   if (website) {
@@ -29,18 +29,10 @@ export async function submitContactForm(
     };
   }
 
-  // Demo project: no real backend is wired up. Replace this with an email
-  // or CRM integration (e.g. Resend, HubSpot) when deploying for real.
-  console.log("[contact-form] Neue Anfrage:", {
-    name: data.name,
-    email: data.email,
-    phone: data.phone || null,
-    message: data.message,
-    submittedAt: new Date().toISOString(),
-  });
+  // Demo-only: do not persist or log visitors' personal information.
 
   return {
     success: true,
-    message: "Vielen Dank für Ihre Nachricht! Wir melden uns in Kürze bei Ihnen.",
+    message: "Demo: Ihre Eingaben wurden geprüft, aber nicht gespeichert oder versendet.",
   };
 }
