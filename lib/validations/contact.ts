@@ -20,8 +20,11 @@ export const contactFormSchema = z.object({
   consent: z.boolean().refine((val) => val === true, {
     message: "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
   }),
-  // Honeypot: must stay empty. Real users never see or fill this field.
-  website: z.string().max(0).optional().or(z.literal("")),
+  // Honeypot: real users never see or fill this field. Deliberately not
+  // validated as empty here — the client resolver shares this schema, and a
+  // browser/password-manager autofill would otherwise block the submit with
+  // an error on an invisible field. The server action checks it instead.
+  honeypot: z.string().optional(),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;
