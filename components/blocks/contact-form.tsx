@@ -18,7 +18,7 @@ const defaultValues: ContactFormValues = {
   phone: "",
   message: "",
   consent: false,
-  website: "",
+  honeypot: "",
 };
 
 export function ContactForm() {
@@ -39,7 +39,17 @@ export function ContactForm() {
 
   const onSubmit = async (values: ContactFormValues) => {
     setStatus(null);
-    const result = await submitContactForm(values);
+    let result;
+    try {
+      result = await submitContactForm(values);
+    } catch {
+      setStatus({
+        type: "error",
+        message:
+          "Ihre Nachricht konnte nicht gesendet werden. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+      });
+      return;
+    }
     setStatus({ type: result.success ? "success" : "error", message: result.message });
     if (result.success) {
       reset(defaultValues);
@@ -106,13 +116,17 @@ export function ContactForm() {
 
       {/* Honeypot field: hidden from sighted users and screen readers, real users never fill it in. */}
       <div className="absolute -left-[9999px] top-auto size-px overflow-hidden" aria-hidden="true">
-        <label htmlFor="website">Firma</label>
+        <label htmlFor="hp-field">Dieses Feld bitte leer lassen</label>
         <input
-          id="website"
+          id="hp-field"
           type="text"
           tabIndex={-1}
           autoComplete="off"
-          {...register("website")}
+          data-1p-ignore
+          data-lpignore="true"
+          data-bwignore
+          data-form-type="other"
+          {...register("honeypot")}
         />
       </div>
 

@@ -35,7 +35,7 @@ const defaultValues: BookingContactValues = {
   mileageKm: "",
   notes: "",
   consent: false,
-  website: "",
+  honeypot: "",
 };
 
 export function StepContact({
@@ -62,12 +62,22 @@ export function StepContact({
 
   const onSubmit = async (values: BookingContactValues) => {
     setSubmitError(null);
-    const result = await submitBookingRequest({
-      ...values,
-      serviceId: service.id,
-      dateISO,
-      time,
-    });
+    let result;
+    try {
+      result = await submitBookingRequest({
+        ...values,
+        serviceId: service.id,
+        dateISO,
+        time,
+      });
+    } catch {
+      // Network failure or crashed action — without this the button just
+      // stops spinning and the customer gets no feedback at all.
+      setSubmitError(
+        "Ihre Anfrage konnte nicht gesendet werden. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+      );
+      return;
+    }
 
     if (result.success) {
       onSuccess(values);
@@ -250,13 +260,17 @@ export function StepContact({
 
         {/* Honeypot field: hidden from sighted users and screen readers, real users never fill it in. */}
         <div className="absolute -left-[9999px] top-auto size-px overflow-hidden" aria-hidden="true">
-          <label htmlFor="booking-website">Firma</label>
+          <label htmlFor="booking-hp-field">Dieses Feld bitte leer lassen</label>
           <input
-            id="booking-website"
+            id="booking-hp-field"
             type="text"
             tabIndex={-1}
             autoComplete="off"
-            {...register("website")}
+            data-1p-ignore
+            data-lpignore="true"
+            data-bwignore
+            data-form-type="other"
+            {...register("honeypot")}
           />
         </div>
 

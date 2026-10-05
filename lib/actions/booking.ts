@@ -30,10 +30,10 @@ export async function submitBookingRequest(
     };
   }
 
-  const { website, ...data } = parsed.data;
+  const { honeypot, ...data } = parsed.data;
 
   // Honeypot triggered: report success to the bot without processing anything.
-  if (website) {
+  if (honeypot) {
     return {
       success: true,
       message: "Ihre Terminanfrage wurde übermittelt.",
