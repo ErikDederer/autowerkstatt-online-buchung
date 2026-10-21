@@ -32,7 +32,16 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Öffne [localhost:3000](http://localhost:3000) für die Website und [localhost:3000/termin](http://localhost:3000/termin) für den Assistenten. Solange das Repository privat ist, benötigt das Klonen entsprechenden GitHub-Zugriff.
+Öffne [localhost:3000](http://localhost:3000) für die Website und [localhost:3000/termin](http://localhost:3000/termin) für den Assistenten.
+
+## Verfügbarkeit der Demo
+
+`GET /api/health` prüft die Datenbank mit einer schreibgeschützten HEAD-Abfrage
+auf `booking_requests`. Die Antwort enthält ausschließlich den Verbindungsstatus,
+keine Datensätze, Anzahl der Anfragen oder Schlüssel. Bei Fehlern antwortet der
+Endpoint mit HTTP 503; Antworten werden nicht gecacht. Das zentrale Workflow
+`Portfolio demo health` im Repository `ErikDederer/lunar-carsharing-app` prüft
+diesen Endpoint und die Carsharing-API alle 10 Minuten (Best Effort).
 
 Ohne Supabase-Konfiguration lassen sich die Seiten ansehen; das Absenden einer Terminanfrage endet mit einer kontrollierten Fehlermeldung.
 
