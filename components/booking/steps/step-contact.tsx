@@ -12,18 +12,26 @@ import { WizardNav } from "@/components/booking/wizard-nav";
 import { HsnTsnLookup } from "@/components/booking/hsn-tsn-lookup";
 import { bookingContactSchema, type BookingContactValues } from "@/lib/validations/booking";
 import { submitBookingRequest } from "@/lib/actions/booking";
-import { formatFullDateLabel } from "@/lib/booking/slots";
+import { formatFullDateLabel, toDayOption } from "@/lib/booking/slots";
 import type { Service } from "@/lib/site-config";
+import type { BookingConfirmation, ChosenSlot } from "@/components/booking/booking-wizard";
 
 export type StepContactProps = {
   service: Service;
-  dateISO: string;
-  time: string;
+  slot: ChosenSlot;
+  bookingMode: "instant" | "request";
   onBack: () => void;
   onEditService: () => void;
   onEditDateTime: () => void;
-  onSuccess: (values: BookingContactValues) => void;
+  /** Slot was taken meanwhile and the customer picked one of the alternatives. */
+  onPickAlternative: (slot: ChosenSlot) => void;
+  onSuccess: (values: BookingContactValues, confirmation: BookingConfirmation) => void;
 };
+
+function shortDay(dateISO: string) {
+  const d = toDayOption(dateISO);
+  return `${d.weekdayShort} ${d.dayNumber}. ${d.monthShort}`;
+}
 
 const defaultValues: BookingContactValues = {
   name: "",
@@ -35,19 +43,23 @@ const defaultValues: BookingContactValues = {
   mileageKm: "",
   notes: "",
   consent: false,
+  remindersOptIn: false,
+  marketingOptIn: false,
   honeypot: "",
 };
 
 export function StepContact({
   service,
-  dateISO,
-  time,
+  slot,
+  bookingMode,
   onBack,
   onEditService,
   onEditDateTime,
+  onPickAlternative,
   onSuccess,
 }: StepContactProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [alternatives, setAlternatives] = useState<ChosenSlot[]>([]);
 
   const {
     register,
@@ -62,13 +74,13 @@ export function StepContact({
 
   const onSubmit = async (values: BookingContactValues) => {
     setSubmitError(null);
+    setAlternatives([]);
     let result;
     try {
       result = await submitBookingRequest({
         ...values,
         serviceId: service.id,
-        dateISO,
-        time,
+        startsAt: slot.startsAt,
       });
     } catch {
       // Network failure or crashed action — without this the button just
@@ -80,9 +92,14 @@ export function StepContact({
     }
 
     if (result.success) {
-      onSuccess(values);
+      onSuccess(values, {
+        status: result.result.status,
+        startsAt: result.result.startsAt,
+        endsAt: result.result.endsAt,
+      });
     } else {
       setSubmitError(result.message);
+      setAlternatives(result.alternatives ?? []);
     }
   };
 
@@ -92,7 +109,9 @@ export function StepContact({
         Ihre Kontaktdaten
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Fast geschafft — wir bestätigen Ihren Termin telefonisch oder per E-Mail.
+        {bookingMode === "instant"
+          ? "Fast geschafft — der Termin wird mit dem Absenden fest für Sie reserviert."
+          : "Fast geschafft — wir bestätigen Ihren Termin telefonisch oder per E-Mail."}
       </p>
 
       <div className="mt-6 space-y-2 rounded-xl border bg-secondary/40 p-4 text-sm">
@@ -113,12 +132,12 @@ export function StepContact({
         <div className="flex items-center justify-between gap-3 text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <CalendarDays className="size-3.5" aria-hidden="true" />
-            {formatFullDateLabel(dateISO)}
+            {formatFullDateLabel(slot.date)}
           </span>
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 font-mono">
               <Clock className="size-3.5" aria-hidden="true" />
-              {time} Uhr
+              {slot.time} Uhr
             </span>
             <button
               type="button"
@@ -301,15 +320,69 @@ export function StepContact({
         />
         {errors.consent && <p className="text-sm text-destructive">{errors.consent.message}</p>}
 
+        <fieldset className="space-y-3">
+          <legend className="text-sm font-medium">Freiwillig — jederzeit mit einem Klick abbestellbar</legend>
+          <Controller
+            control={control}
+            name="remindersOptIn"
+            render={({ field }) => (
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="booking-reminders"
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                />
+                <Label htmlFor="booking-reminders" className="block text-sm font-normal leading-snug text-muted-foreground">
+                  Terminbestätigung und Erinnerung 24 Stunden vorher per E-Mail und SMS.
+                </Label>
+              </div>
+            )}
+          />
+          <Controller
+            control={control}
+            name="marketingOptIn"
+            render={({ field }) => (
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="booking-marketing"
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                />
+                <Label htmlFor="booking-marketing" className="block text-sm font-normal leading-snug text-muted-foreground">
+                  Erinnerungen an HU-Termin, Reifenwechsel und Inspektion per E-Mail.
+                </Label>
+              </div>
+            )}
+          />
+        </fieldset>
+
         {submitError && (
-          <p role="alert" className="text-sm font-medium text-destructive">
-            {submitError}
-          </p>
+          <div role="alert" className="space-y-2">
+            <p className="text-sm font-medium text-destructive">{submitError}</p>
+            {alternatives.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {alternatives.map((alt) => (
+                  <button
+                    key={alt.startsAt}
+                    type="button"
+                    onClick={() => {
+                      onPickAlternative(alt);
+                      setAlternatives([]);
+                      setSubmitError(null);
+                    }}
+                    className="rounded-lg border border-primary px-3 py-1.5 font-mono text-sm text-primary hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    {shortDay(alt.date)}, {alt.time}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         <WizardNav
           onBack={onBack}
-          nextLabel="Termin anfragen"
+          nextLabel={bookingMode === "instant" ? "Termin verbindlich buchen" : "Termin anfragen"}
           nextType="submit"
           nextLoading={isSubmitting}
         />

@@ -9,8 +9,19 @@ import { CTABanner } from "@/components/blocks/cta-banner";
 import { FAQAccordion } from "@/components/blocks/faq-accordion";
 import { ContactSection } from "@/components/blocks/contact-section";
 import { Footer } from "@/components/blocks/footer";
+import { getSiteCatalog } from "@/lib/werkplan/catalog";
 
-export default function Home() {
+// Catalog, prices and hours come from WerkPlan; refreshed every 5 minutes.
+export const revalidate = 300;
+
+/** The six most-booked services on the homepage; the full list is in /termin. */
+const FEATURED = ["oelwechsel", "inspektion", "reifenwechsel", "bremsen-check", "hu-au-vorbereitung", "klimaservice"];
+
+export default async function Home() {
+  const catalog = await getSiteCatalog();
+  const featured = FEATURED.map((slug) => catalog.services.find((s) => s.slug === slug)).filter(
+    (s): s is NonNullable<typeof s> => !!s
+  );
   return (
     <>
       <Header />
@@ -20,11 +31,11 @@ export default function Home() {
         <div className="flex justify-center py-10">
           <GoogleReviewsBadge />
         </div>
-        <ServicesGrid />
+        <ServicesGrid services={featured.length ? featured : catalog.services.slice(0, 6)} />
         <TestimonialsSection />
         <CTABanner />
         <FAQAccordion />
-        <ContactSection />
+        <ContactSection openingHours={catalog.openingHours} />
       </main>
       <Footer />
     </>

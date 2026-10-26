@@ -3,30 +3,29 @@
 import { CalendarDays, CheckCircle2, Clock, Download, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildIcsContent, downloadIcsFile } from "@/lib/booking/ics";
-import { formatFullDateLabel, parseDateISO } from "@/lib/booking/slots";
+import { formatFullDateLabel } from "@/lib/booking/slots";
 import { siteConfig, type Service } from "@/lib/site-config";
 import type { BookingContactValues } from "@/lib/validations/booking";
+import type { BookingConfirmation, ChosenSlot } from "@/components/booking/booking-wizard";
 
 export type StepConfirmationProps = {
   service: Service;
-  dateISO: string;
-  time: string;
+  slot: ChosenSlot;
   contact: BookingContactValues;
+  confirmation: BookingConfirmation;
   onReset: () => void;
 };
 
 export function StepConfirmation({
   service,
-  dateISO,
-  time,
+  slot,
   contact,
+  confirmation,
   onReset,
 }: StepConfirmationProps) {
-  const handleDownload = () => {
-    const [hours, minutes] = time.split(":").map(Number);
-    const start = parseDateISO(dateISO);
-    start.setHours(hours, minutes, 0, 0);
+  const booked = confirmation.status === "booked";
 
+  const handleDownload = () => {
     const { street, zip, city } = siteConfig.business.address;
 
     const content = buildIcsContent({
@@ -39,11 +38,11 @@ export function StepConfirmation({
         .filter(Boolean)
         .join("\n"),
       location: `${street}, ${zip} ${city}`,
-      start,
-      durationMinutes: service.durationMinutes,
+      start: new Date(confirmation.startsAt),
+      end: new Date(confirmation.endsAt),
     });
 
-    downloadIcsFile(`termin-${dateISO}-${time.replace(":", "")}.ics`, content);
+    downloadIcsFile(`termin-${slot.date}-${slot.time.replace(":", "")}.ics`, content);
   };
 
   return (
@@ -53,11 +52,12 @@ export function StepConfirmation({
       </div>
 
       <h2 className="mt-5 font-heading text-2xl font-semibold uppercase tracking-wide">
-        Termin angefragt!
+        {booked ? "Termin gebucht!" : "Termin angefragt!"}
       </h2>
       <p className="mt-2 text-pretty text-sm text-muted-foreground">
-        Vielen Dank, {contact.name.split(" ")[0]}. Wir bestätigen Ihren Termin in Kürze
-        telefonisch oder per E-Mail an {contact.email}.
+        {booked
+          ? `Vielen Dank, ${contact.name.split(" ")[0]}. Ihr Termin ist fest eingeplant — wir freuen uns auf Sie und Ihren ${contact.vehicleMake}.`
+          : `Vielen Dank, ${contact.name.split(" ")[0]}. Wir bestätigen Ihren Termin in Kürze telefonisch oder per E-Mail an ${contact.email}.`}
       </p>
 
       <div className="mx-auto mt-6 max-w-sm space-y-2 rounded-xl border bg-secondary/40 p-4 text-left text-sm">
@@ -67,11 +67,11 @@ export function StepConfirmation({
         </div>
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <CalendarDays className="size-3.5" aria-hidden="true" />
-          {formatFullDateLabel(dateISO)}
+          {formatFullDateLabel(slot.date)}
         </div>
         <div className="flex items-center gap-1.5 font-mono text-muted-foreground">
           <Clock className="size-3.5" aria-hidden="true" />
-          {time} Uhr
+          {slot.time} Uhr
         </div>
         <div className="flex items-center justify-between gap-3 border-t pt-2 text-muted-foreground">
           <span>
