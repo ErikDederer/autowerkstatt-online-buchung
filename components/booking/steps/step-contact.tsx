@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Clock, Pencil } from "lucide-react";
+import { CalendarDays, Clock, Info, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -130,6 +130,20 @@ export function StepContact({
             </button>
           </div>
         </div>
+      </div>
+
+      <div
+        role="note"
+        className="mt-4 flex gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm"
+      >
+        <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+        <p>
+          <span className="font-medium">Öffentliche Demo – bitte keine echten Daten eingeben.</span>{" "}
+          <span className="text-muted-foreground">
+            Verwenden Sie erfundene Namen, Telefonnummern und Kennzeichen. Anfragen sind im
+            Demo-Zugang von WerkPlan für alle Besucher sichtbar und werden täglich gelöscht.
+          </span>
+        </p>
       </div>
 
       <form id="booking-contact-form" onSubmit={handleSubmit(onSubmit)} noValidate className="relative mt-6 space-y-5">
