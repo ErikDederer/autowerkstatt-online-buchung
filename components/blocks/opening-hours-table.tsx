@@ -9,7 +9,7 @@ export type OpeningHoursTableProps = {
 
 export function OpeningHoursTable({
   title = "Öffnungszeiten",
-  rows = siteConfig.openingHours,
+  rows = [...siteConfig.openingHours],
   className,
 }: OpeningHoursTableProps) {
   return (

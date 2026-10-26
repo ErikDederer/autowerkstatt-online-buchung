@@ -1,24 +1,27 @@
 # Autowerkstatt Online-Buchung
 
-Deutschsprachiges Portfolio-Projekt für eine Werkstatt-Website mit mehrstufiger Terminanfrage und Supabase-Anbindung. Die Beispielmarke **Autowerkstatt Nord** dient der Demonstration; das Projekt ist kein Nachweis eines realen Kundenauftrags.
+Deutschsprachiges Portfolio-Projekt für eine Werkstatt-Website mit Online-Terminbuchung über die WerkPlan-Plattform. Die Beispielmarke **Autowerkstatt Nord** dient der Demonstration; das Projekt ist kein Nachweis eines realen Kundenauftrags.
 
 ## Funktionsumfang
 
 - Landingpage mit Leistungen, Preisen, Öffnungszeiten, FAQ und Beispielbewertungen.
-- Buchungsassistent unter `/termin`: Leistung → Wunschtermin → Kontakt- und Fahrzeugdaten.
+- Buchungsassistent unter `/termin`: Leistung → freier Termin → Kontakt- und Fahrzeugdaten.
+- Leistungen, Preise und Öffnungszeiten kommen live aus WerkPlan (alle 5 Minuten aktualisiert, mit Rückfall auf `lib/site-config.ts`).
+- Freie Termine berechnet WerkPlans Slot-Engine (Öffnungszeiten, Mechaniker-Schichten, Qualifikation, Abwesenheiten, Hebebühnen/Arbeitsplätze, Puffer). Doppelbuchungen schließt die Datenbank aus; ist ein Termin inzwischen vergeben, bietet der Assistent die nächsten freien an.
+- Je nach Werkstatt-Einstellung wird sofort fest gebucht oder eine Anfrage gestellt.
+- Freiwillige Einwilligungen (Terminerinnerung, HU-/Service-Erinnerungen) werden mit Zeitstempel und Textversion in WerkPlan gespeichert.
 - Client- und serverseitige Formularvalidierung mit React Hook Form und Zod.
-- Speicherung von Terminanfragen in Supabase (`booking_requests`).
-- Bestätigungsansicht und Download eines Kalendereintrags im ICS-Format.
+- Bestätigungsansicht und Download eines Kalendereintrags im ICS-Format (UTC-Zeiten).
 - Kleine lokale HSN/TSN-Beispieltabelle zur Fahrzeugauswahl.
 - Gemeinsames Datenmodell für die Weiterverarbeitung in WerkPlan.
 
-**Eine Terminanfrage ist keine verbindliche Buchung.** Die angezeigten Zeitfenster werden lokal simuliert und berücksichtigen keine bestehenden Werkstatttermine. E-Mail-Versand und SMS-Erinnerungen sind nicht implementiert. Die separate Kontaktform prüft Eingaben als Demo, speichert oder protokolliert sie nicht und versendet keine Nachricht.
+E-Mail-Versand und SMS-Erinnerungen folgen in Phase 3 (Benachrichtigungsmodul in WerkPlan). Die separate Kontaktform prüft Eingaben als Demo, speichert oder protokolliert sie nicht und versendet keine Nachricht.
 
 ## Technik
 
-Next.js 16.2 · React 19 · TypeScript · Tailwind CSS 4 · shadcn/Base UI · React Hook Form · Zod · Supabase
+Next.js 16.2 · React 19 · TypeScript · Tailwind CSS 4 · shadcn/Base UI · React Hook Form · Zod · WerkPlan-API
 
-Server Actions übernehmen die Validierung und Speicherung. Der Supabase-Service-Role-Client liegt in `lib/supabase/admin.ts` und ist durch `server-only` vom Client-Bundle getrennt. Inhalte und Leistungsdefinitionen werden zentral in `lib/site-config.ts` gepflegt.
+Die Website hat **keinen eigenen Datenbankzugang**. Server Actions validieren Eingaben und rufen WerkPlans öffentliche Buchungs-API auf (`lib/werkplan/client.ts`, durch `server-only` vom Client-Bundle getrennt). Der Website-Schlüssel identifiziert die Werkstatt; ein Supabase-Service-Role-Schlüssel wird nicht mehr benötigt. Marketing-Texte bleiben in `lib/site-config.ts`.
 
 ## Lokal starten
 
@@ -43,28 +46,28 @@ Endpoint mit HTTP 503; Antworten werden nicht gecacht. Das zentrale Workflow
 `Portfolio demo health` im Repository `ErikDederer/lunar-carsharing-app` prüft
 diesen Endpoint und die Carsharing-API alle 10 Minuten (Best Effort).
 
-Ohne Supabase-Konfiguration lassen sich die Seiten ansehen; das Absenden einer Terminanfrage endet mit einer kontrollierten Fehlermeldung.
+Ohne WerkPlan-Konfiguration lassen sich die Seiten mit statischen Inhalten ansehen; `/termin` verweist dann auf die Telefonnummer.
 
 ## Verbindung zu WerkPlan
 
-Die Website schreibt Anfragen in `booking_requests`; WerkPlan ist die zugehörige Verwaltungsanwendung. Beide Projekte müssen dieselben Spalten, Statuswerte und Service-IDs verwenden. Diese Website setzt `status = neu` und `source = website`.
+WerkPlan ([../werkplan](../werkplan)) ist das Backend der Plattform. Die Website nutzt drei Endpunkte:
 
-### Demo-Datenbank konfigurieren
+| Endpunkt | Zweck |
+| --- | --- |
+| `GET /api/public/v1/workshop` | Kontakt, Öffnungszeiten, buchbarer Leistungskatalog, Buchungsregeln |
+| `GET /api/public/v1/slots` | freie Startzeiten für die gewählte Leistung |
+| `POST /api/public/v1/bookings` | Buchung bzw. Anfrage; `409` mit Alternativen, wenn der Termin vergeben ist |
 
-**Nur eine isolierte Demo-Datenbank mit erfundenen Daten verwenden.** Die Zugriffsmigration `supabase/migrations/0002_server_only_access.sql` sperrt direkte Zugriffe der Rollen `anon` und `authenticated` auf die gemeinsamen Arbeitstabellen. WerkPlan benötigt die geschützte Serverversion mit Mitarbeiteranmeldung. Eine alte, ungeschützte WerkPlan-Version kann Daten weiterhin über ihren privilegierten Serverzugriff offenlegen.
-
-1. Eine isolierte Supabase-Demo-Datenbank bereitstellen.
-2. `supabase/migrations/0001_booking_requests.sql` und anschließend `supabase/migrations/0002_server_only_access.sql` prüfen und dort ausführen. `CREATE TABLE IF NOT EXISTS` gleicht eine bereits vorhandene Tabelle nicht automatisch an: bei Nutzung mit WerkPlan das tatsächliche Schema separat vergleichen.
-3. In `.env.local` die beiden Server-Variablen setzen:
+In `.env.local`:
 
 | Variable | Bedeutung |
 | --- | --- |
-| `SUPABASE_URL` | Projekt-API-URL im Format `https://<project-ref>.supabase.co`, keine PostgreSQL-Verbindungszeichenfolge |
-| `SUPABASE_SERVICE_ROLE_KEY` | Geheimer Server-Schlüssel; umgeht Row Level Security |
+| `WERKPLAN_API_URL` | Basis-URL der WerkPlan-Instanz, lokal `http://localhost:3000` |
+| `WERKPLAN_API_KEY` | Website-Schlüssel der Werkstatt (`wp_live_…`), erzeugt in WerkPlan mit `npx tsx scripts/rotate-site-key.ts <slug>` |
 
-Den Service-Role-Schlüssel niemals mit `NEXT_PUBLIC_` veröffentlichen, in Client-Komponenten verwenden oder einchecken. `.env.example` enthält ausschließlich Platzhalter.
+Den Schlüssel niemals mit `NEXT_PUBLIC_` veröffentlichen. Lokal laufen WerkPlan auf Port 3000 und die Website z. B. mit `npx next dev -p 3001`. Ohne erreichbare API zeigen die Seiten die statischen Inhalte aus `lib/site-config.ts`, und `/termin` verweist auf die Telefonnummer.
 
-Gemeinsame Service-IDs: `oelwechsel`, `inspektion`, `reifenwechsel`, `bremsen-check`, `hu-au-vorbereitung`, `klimaservice`.
+Das Datenbankschema gehört WerkPlan (`werkplan/supabase/migrations`). Die Dateien unter `supabase/migrations` hier sind historisch und werden nicht mehr gepflegt.
 
 ## Projektstruktur
 
@@ -74,11 +77,11 @@ components/blocks/     Bausteine der Landingpage
 components/booking/    Buchungsassistent und Formschritte
 components/ui/         UI-Komponenten
 lib/actions/           Server Actions für Anfrage und Kontakt
-lib/booking/           Demo-Zeitfenster, HSN/TSN und ICS
+lib/booking/           Datumshilfen, HSN/TSN, ICS, Rate-Limit
 lib/validations/       Zod-Schemas
-lib/supabase/          Ausschließlich serverseitiger Datenbankzugriff
+lib/werkplan/          Server-Client für WerkPlans Buchungs-API, Katalog-Mapping
 lib/site-config.ts     Beispielbetrieb, Leistungen und Texte
-supabase/migrations/   Datenbankschema und Zugriffsrichtlinien
+supabase/migrations/   historisch — Schema liegt jetzt in WerkPlan
 ```
 
 ## Prüfungen
@@ -96,7 +99,6 @@ npm run build
 - Die Datenbank sperrt direkte Browser-Zugriffe; vor realer Nutzung die geschützte WerkPlan-Version ausrollen und alte öffentliche Deployments sperren.
 - Die Kontaktform bleibt eine ausdrücklich gekennzeichnete Demo ohne Speicherung, Protokollierung oder Versand.
 - Rate-Limiting erfolgt nur im Arbeitsspeicher einer Instanz (3 Anfragen je IP und Stunde); es ist nicht zwischen Instanzen geteilt.
-- Datum und Uhrzeit brauchen zusätzliche serverseitige Prüfung gegen erlaubte Termine; es gibt keine echte Kapazitätsreservierung.
 - Geschäftsdaten, Bewertungen und Rechtstexte sind Beispielinhalte und keine veröffentlichungsfertigen Angaben.
 - Die konfigurierte Social-Preview-Datei `/og-image.jpg` fehlt; die Basis-URL ist ein Platzhalter.
 - Die Demo ist absichtlich auf `noindex` gesetzt. Das ersetzt keine Zugriffskontrolle.

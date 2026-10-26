@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const bookingRequestSchema = z.object({
-  serviceId: z.string().min(1, "Bitte wählen Sie eine Leistung aus."),
-  dateISO: z.string().min(1, "Bitte wählen Sie ein Datum aus."),
-  time: z.string().min(1, "Bitte wählen Sie eine Uhrzeit aus."),
+  // WerkPlan catalog service id and the exact free slot it offered.
+  serviceId: z.uuid({ message: "Bitte wählen Sie eine Leistung aus." }),
+  startsAt: z.iso.datetime({ message: "Bitte wählen Sie eine Uhrzeit aus." }),
   name: z
     .string()
     .trim()
@@ -51,6 +51,9 @@ export const bookingRequestSchema = z.object({
   consent: z.boolean().refine((val) => val === true, {
     message: "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
   }),
+  // Optional opt-ins, stored with timestamp and wording version in WerkPlan.
+  remindersOptIn: z.boolean(),
+  marketingOptIn: z.boolean(),
   // Honeypot: real users never see or fill this field. Deliberately not
   // validated as empty here — the client resolver shares this schema, and a
   // browser/password-manager autofill would otherwise block the submit with
@@ -70,6 +73,8 @@ export const bookingContactSchema = bookingRequestSchema.pick({
   mileageKm: true,
   notes: true,
   consent: true,
+  remindersOptIn: true,
+  marketingOptIn: true,
   honeypot: true,
 });
 
