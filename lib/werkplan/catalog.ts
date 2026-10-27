@@ -66,6 +66,7 @@ export type SiteCatalog = {
   services: BookableService[];
   openingHours: OpeningHoursRow[];
   bookingMode: "instant" | "request";
+  assistantEnabled: boolean;
   /** false → WerkPlan unreachable; pages fall back to site-config content. */
   live: boolean;
 };
@@ -81,6 +82,7 @@ export async function getSiteCatalog(): Promise<SiteCatalog> {
       services: info.services.map(toService),
       openingHours: openingHoursRows(info),
       bookingMode: info.booking.mode,
+      assistantEnabled: info.assistantEnabled ?? false,
       live: true,
     };
   } catch {
@@ -88,6 +90,7 @@ export async function getSiteCatalog(): Promise<SiteCatalog> {
       services: siteConfig.services.map((s) => ({ ...s, slug: s.id })),
       openingHours: [...siteConfig.openingHours],
       bookingMode: "request",
+      assistantEnabled: false,
       live: false,
     };
   }
