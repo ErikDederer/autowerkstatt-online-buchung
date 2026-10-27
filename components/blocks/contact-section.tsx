@@ -1,13 +1,14 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "@/components/blocks/contact-form";
 import { OpeningHoursTable } from "@/components/blocks/opening-hours-table";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, type OpeningHoursRow } from "@/lib/site-config";
 
 export type ContactSectionProps = {
   id?: string;
   eyebrow?: string;
   title?: string;
   text?: string;
+  openingHours?: OpeningHoursRow[];
 };
 
 export function ContactSection({
@@ -15,6 +16,7 @@ export function ContactSection({
   eyebrow = "Kontakt",
   title = "Lassen Sie uns über Ihr Projekt sprechen",
   text = "Füllen Sie das Formular aus oder rufen Sie uns direkt an — wir melden uns in der Regel innerhalb eines Werktags.",
+  openingHours,
 }: ContactSectionProps) {
   const { phone, phoneDisplay, email, address } = siteConfig.business;
 
@@ -55,7 +57,7 @@ export function ContactSection({
             </li>
           </ul>
 
-          <OpeningHoursTable className="mt-10" />
+          <OpeningHoursTable className="mt-10" rows={openingHours} />
         </div>
 
         <div className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8 lg:col-span-3">

@@ -25,6 +25,7 @@ import {
   Disc,
   Snowflake,
   Gauge,
+  BatteryCharging,
   type LucideIcon,
 } from "lucide-react";
 
@@ -55,6 +56,7 @@ export const iconMap = {
   Disc,
   Snowflake,
   Gauge,
+  BatteryCharging,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof iconMap;

@@ -3,16 +3,17 @@
 import { Clock } from "lucide-react";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { siteConfig, type Service } from "@/lib/site-config";
+import type { Service } from "@/lib/site-config";
 import { WizardNav } from "@/components/booking/wizard-nav";
 
 export type StepServiceProps = {
+  services: Service[];
   selectedServiceId: string | null;
   onSelect: (service: Service) => void;
   onNext: () => void;
 };
 
-export function StepService({ selectedServiceId, onSelect, onNext }: StepServiceProps) {
+export function StepService({ services, selectedServiceId, onSelect, onNext }: StepServiceProps) {
   return (
     <div>
       <h2 className="font-heading text-xl font-semibold uppercase tracking-wide">
@@ -27,7 +28,7 @@ export function StepService({ selectedServiceId, onSelect, onNext }: StepService
         aria-label="Leistung wählen"
         className="mt-6 grid gap-3 sm:grid-cols-2"
       >
-        {siteConfig.services.map((service) => {
+        {services.map((service) => {
           const Icon = getIcon(service.icon);
           const isSelected = service.id === selectedServiceId;
 
