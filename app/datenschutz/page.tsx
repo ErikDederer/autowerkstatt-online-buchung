@@ -117,6 +117,46 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
+              <h2 className="text-base font-semibold">4a. KI-Chat-Assistent</h2>
+              <p className="mt-2">
+                Der Chat „Termin per Chat“ ist ein KI-System, kein Mensch.
+                Darauf weisen wir vor Beginn des Gesprächs hin. Der
+                Assistent hilft bei der Auswahl einer Leistung, nennt Dauer
+                und Preisrahmen aus unserem Leistungskatalog und kann einen
+                Termin buchen oder Ihr Anliegen an unser Team übergeben.
+                Verbindliche Diagnosen, Preise oder Zusagen gibt er nicht.
+              </p>
+              <p className="mt-2">
+                Verarbeitet werden Ihre Chatnachrichten sowie die Angaben,
+                die Sie für einen Termin machen (Name, Telefonnummer,
+                optional E-Mail, Fahrzeug und Kennzeichen). Rechtsgrundlage
+                ist die Anbahnung bzw. Durchführung eines Vertrags (Art. 6
+                Abs. 1 lit. b DSGVO); Erinnerungen per SMS/E-Mail senden wir
+                nur mit Ihrer ausdrücklichen Einwilligung (Art. 6 Abs. 1
+                lit. a DSGVO), die Sie jederzeit widerrufen können. Der
+                Gesprächsverlauf wird nach 90 Tagen gelöscht. Ihre
+                IP-Adresse speichern wir nicht; zur Missbrauchsabwehr nutzen
+                wir einen täglich wechselnden, nicht rückrechenbaren Hashwert.
+              </p>
+              <p className="mt-2">
+                Zur Erzeugung der Antworten werden die Nachrichten an den
+                KI-Anbieter Anthropic PBC übermittelt, der sie als
+                Auftragsverarbeiter verarbeitet. Daten von anderen Kunden
+                oder bestehende Buchungen kann der Assistent nicht abrufen.
+                Eine automatisierte Entscheidung mit rechtlicher Wirkung
+                (Art. 22 DSGVO) findet nicht statt.{" "}
+                <span className="text-muted-foreground">
+                  [Hinweis für den Betreiber: Vor dem Live-Betrieb den
+                  Auftragsverarbeitungsvertrag mit Anthropic abschließen,
+                  Verarbeitungsort und Garantien für die Übermittlung in
+                  Drittländer (z. B. EU-Standardvertragsklauseln) hier
+                  ergänzen – oder einen EU-Betrieb über Amazon Bedrock bzw.
+                  Google Vertex AI wählen.]
+                </span>
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-base font-semibold">5. Weitergabe von Daten</h2>
               <p className="mt-2">
                 Eine Übermittlung Ihrer personenbezogenen Daten an Dritte

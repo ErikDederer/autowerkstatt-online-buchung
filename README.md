@@ -12,6 +12,7 @@ Deutschsprachiges Portfolio-Projekt für eine Werkstatt-Website mit Online-Termi
 - Freiwillige Einwilligungen (Terminerinnerung, HU-/Service-Erinnerungen) werden mit Zeitstempel und Textversion in WerkPlan gespeichert.
 - Client- und serverseitige Formularvalidierung mit React Hook Form und Zod.
 - Bestätigungsansicht und Download eines Kalendereintrags im ICS-Format (UTC-Zeiten).
+- KI-Chat „Termin per Chat“ (wenn der Tarif der Werkstatt ihn enthält): erkennt das Anliegen, nennt Dauer und Preisrahmen aus dem Katalog, bietet freie Termine als Buttons an und bucht. Antwortet in der Sprache des Kunden (Arabisch/Persisch rechts-nach-links), weist sich als KI aus und übergibt im Zweifel an das Team. Das Chatfenster wird erst beim Öffnen geladen.
 - Kleine lokale HSN/TSN-Beispieltabelle zur Fahrzeugauswahl.
 - Gemeinsames Datenmodell für die Weiterverarbeitung in WerkPlan.
 
@@ -57,6 +58,7 @@ WerkPlan ([../werkplan](../werkplan)) ist das Backend der Plattform. Die Website
 | `GET /api/public/v1/workshop` | Kontakt, Öffnungszeiten, buchbarer Leistungskatalog, Buchungsregeln |
 | `GET /api/public/v1/slots` | freie Startzeiten für die gewählte Leistung |
 | `POST /api/public/v1/bookings` | Buchung bzw. Anfrage; `409` mit Alternativen, wenn der Termin vergeben ist |
+| `POST/GET /api/public/v1/chat` | KI-Assistent: Nachricht senden bzw. Verlauf wiederherstellen (über den Proxy `/api/chat`) |
 
 In `.env.local`:
 
@@ -79,7 +81,8 @@ components/ui/         UI-Komponenten
 lib/actions/           Server Actions für Anfrage und Kontakt
 lib/booking/           Datumshilfen, HSN/TSN, ICS, Rate-Limit
 lib/validations/       Zod-Schemas
-lib/werkplan/          Server-Client für WerkPlans Buchungs-API, Katalog-Mapping
+lib/werkplan/          Server-Client für WerkPlans Buchungs- und Chat-API, Katalog-Mapping
+components/chat/       KI-Chat-Widget (Launcher + nachgeladenes Panel)
 lib/site-config.ts     Beispielbetrieb, Leistungen und Texte
 supabase/migrations/   historisch — Schema liegt jetzt in WerkPlan
 ```
