@@ -157,6 +157,42 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
+              <h2 className="text-base font-semibold">4b. Terminnachrichten und Erinnerungen</h2>
+              <p className="mt-2">
+                Zu Ihrem Termin erhalten Sie eine Bestätigung, eine Erinnerung
+                24 Stunden vorher sowie Statusmeldungen (Fahrzeug angenommen,
+                abholbereit). Per E-Mail erfolgt das zur Durchführung des
+                Vertrags (Art. 6 Abs. 1 lit. b DSGVO), per SMS oder WhatsApp
+                nur mit Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Über
+                einen persönlichen Link in diesen Nachrichten können Sie den
+                Termin ohne Anmeldung bestätigen, verschieben oder absagen.
+              </p>
+              <p className="mt-2">
+                Erinnerungen an die Hauptuntersuchung, den saisonalen
+                Reifenwechsel oder die fällige Inspektion senden wir nur, wenn
+                Sie dem für den jeweiligen Kanal ausdrücklich zugestimmt haben.
+                Jede Nachricht enthält einen Link, mit dem Sie sich mit einem
+                Klick abmelden können; Einwilligung und Widerruf speichern wir
+                mit Zeitpunkt. Ob ein Link in einer solchen Nachricht geöffnet
+                wurde, erfassen wir, um den Nutzen der Erinnerungen zu
+                bewerten.
+              </p>
+              <p className="mt-2">
+                Schreiben Sie uns in einer anderen Sprache als Deutsch oder
+                Englisch, übersetzen wir unsere Nachrichtenvorlagen mit Hilfe
+                von KI (Anthropic) in Ihre Sprache; dabei werden nur die
+                Vorlagentexte übermittelt, keine Daten über Sie. Gesendete
+                Nachrichten werden nach 180 Tagen gelöscht.{" "}
+                <span className="text-muted-foreground">
+                  [Hinweis für den Betreiber: Eingesetzte Versanddienstleister
+                  (z. B. E-Mail: Resend, SMS: Twilio, WhatsApp: Meta Platforms
+                  Ireland) mit Sitz, Auftragsverarbeitungsvertrag und
+                  Drittlandgarantien hier ergänzen.]
+                </span>
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-base font-semibold">5. Weitergabe von Daten</h2>
               <p className="mt-2">
                 Eine Übermittlung Ihrer personenbezogenen Daten an Dritte
