@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Header } from "@/components/blocks/header";
 import { Footer } from "@/components/blocks/footer";
 import { Phone } from "lucide-react";
-import { BookingWizard } from "@/components/booking/booking-wizard";
+import { Suspense } from "react";
+import { BookingWizard, BookingWizardFromLink } from "@/components/booking/booking-wizard";
 import { siteConfig } from "@/lib/site-config";
 import { getSiteCatalog } from "@/lib/werkplan/catalog";
 
@@ -39,7 +40,9 @@ export default async function TerminPage() {
 
           <div className="mt-10">
             {catalog.live ? (
-              <BookingWizard services={catalog.services} bookingMode={catalog.bookingMode} />
+              <Suspense fallback={<BookingWizard services={catalog.services} bookingMode={catalog.bookingMode} />}>
+                <BookingWizardFromLink services={catalog.services} bookingMode={catalog.bookingMode} />
+              </Suspense>
             ) : (
               <div role="status" className="rounded-2xl border bg-card p-8 text-center">
                 <p className="font-heading text-lg font-semibold">
