@@ -31,6 +31,8 @@ export type WorkshopInfo = {
   services: ApiService[];
   cancellationPolicy: { freeCancellationHours: number; textDe: string; textEn: string } | null;
   booking: { mode: "instant" | "request"; minLeadMinutes: number; horizonDays: number; slotStepMinutes: number };
+  /** Whether the workshop's plan includes the AI chat assistant. */
+  assistantEnabled?: boolean;
 };
 
 export type ApiSlot = { date: string; time: string; startsAt: string };
@@ -102,7 +104,8 @@ async function call<T>(
         ...(endUserIp ? { "x-end-user-ip": endUserIp } : {}),
         ...rest.headers,
       },
-      signal: AbortSignal.timeout(8000),
+      // Chat turns run the model and tools; everything else answers fast.
+      signal: AbortSignal.timeout(path.startsWith("/chat") ? 60_000 : 8000),
     });
   } catch {
     throw new WerkplanApiError(503, "unreachable", "Der Buchungsdienst ist gerade nicht erreichbar.");
@@ -138,5 +141,50 @@ export function createBooking(payload: BookingPayload, endUserIp: string) {
     body: JSON.stringify(payload),
     cache: "no-store",
     endUserIp,
+  });
+}
+
+// --- AI chat assistant --------------------------------------------------------
+
+export type ChatUi = {
+  slots?: { date: string; time: string; startsAt: string; label: string }[];
+  booking?: { status: "booked" | "requested"; date: string; time: string; services: string[] };
+  handoff?: { urgency: "normal" | "urgent" };
+};
+
+export type ChatReply = {
+  conversationId: string;
+  token?: string;
+  reply: string;
+  ui: ChatUi;
+  language: string | null;
+  dir: "ltr" | "rtl";
+  status: string;
+};
+
+export type ChatTranscript = {
+  status: string;
+  language: string | null;
+  dir: "ltr" | "rtl";
+  messages: { role: "user" | "assistant"; text: string; at: string }[];
+};
+
+export function sendChatMessage(
+  payload: { message: string; conversationId?: string | null; token?: string | null; privacyAccepted?: boolean },
+  endUserIp: string
+) {
+  return call<ChatReply>("/chat", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    cache: "no-store",
+    endUserIp,
+  });
+}
+
+export function getChatTranscript(conversationId: string, token: string, endUserIp: string) {
+  return call<ChatTranscript>(`/chat?conversationId=${encodeURIComponent(conversationId)}`, {
+    cache: "no-store",
+    endUserIp,
+    headers: { "x-chat-token": token },
   });
 }
