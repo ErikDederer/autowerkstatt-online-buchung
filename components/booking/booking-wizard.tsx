@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { StepIndicator } from "@/components/booking/step-indicator";
 import { StepService } from "@/components/booking/steps/step-service";
 import { StepDateTime } from "@/components/booking/steps/step-datetime";
@@ -20,21 +21,37 @@ export type BookingConfirmation = {
   endsAt: string;
 };
 
+type WizardProps = {
+  /** Live catalog from WerkPlan; `id` is WerkPlan's service id. */
+  services: (Service & { slug?: string })[];
+  bookingMode: "instant" | "request";
+};
+
+/**
+ * Links from reminders and campaigns (/termin?leistung=reifenwechsel) open
+ * with the service chosen and go straight to the date. Render inside
+ * <Suspense> with a plain <BookingWizard> as fallback so the page stays
+ * statically cached.
+ */
+export function BookingWizardFromLink(props: WizardProps) {
+  const slug = useSearchParams().get("leistung");
+  const preselected = slug ? props.services.find((s) => s.slug === slug) : undefined;
+  return <BookingWizard key={preselected?.id ?? "none"} {...props} initialServiceId={preselected?.id} />;
+}
+
 export function BookingWizard({
   services,
   bookingMode,
-}: {
-  /** Live catalog from WerkPlan; `id` is WerkPlan's service id. */
-  services: Service[];
-  bookingMode: "instant" | "request";
-}) {
-  const [step, setStep] = useState<WizardStep>(1);
-  const [serviceId, setServiceId] = useState<string | null>(null);
+  initialServiceId,
+}: WizardProps & { initialServiceId?: string }) {
+  const [step, setStep] = useState<WizardStep>(initialServiceId ? 2 : 1);
+  const [serviceId, setServiceId] = useState<string | null>(initialServiceId ?? null);
   const [slot, setSlot] = useState<ChosenSlot | null>(null);
   const [contact, setContact] = useState<BookingContactValues | null>(null);
   const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
 
   const service = services.find((s) => s.id === serviceId);
+
 
   const handleSelectService = (selected: Service) => {
     setServiceId(selected.id);
