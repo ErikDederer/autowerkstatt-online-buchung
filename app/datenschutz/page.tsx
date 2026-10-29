@@ -45,13 +45,16 @@ export default function DatenschutzPage() {
               </h2>
               <p className="mt-2">
                 Beim Aufruf dieser Website erhebt unser Hosting-Anbieter
-                automatisch technische Zugriffsdaten (sogenannte Server-Log-Files),
+                Vercel Inc. (USA) automatisch technische Zugriffsdaten (sogenannte Server-Log-Files),
                 darunter IP-Adresse, Datum und Uhrzeit der Anfrage,
                 Browsertyp und -version sowie das verwendete Betriebssystem.
                 Diese Daten sind technisch notwendig, um die Website
                 auszuliefern und die Betriebssicherheit zu gewährleisten
                 (Art. 6 Abs. 1 lit. f DSGVO), und werden nicht mit anderen
-                Datenquellen zusammengeführt.
+                Datenquellen zusammengeführt. Mit Vercel besteht ein
+                Auftragsverarbeitungsvertrag; die Übermittlung in die USA
+                stützt sich auf das EU-US Data Privacy Framework und
+                EU-Standardvertragsklauseln.
               </p>
               <p className="mt-2">
                 Diese Website verwendet keine Analyse- oder
@@ -101,13 +104,12 @@ export default function DatenschutzPage() {
               <p className="mt-2">
                 Ihre Terminanfrage wird in einer Datenbank (Supabase,
                 PostgreSQL) gespeichert und ist ausschließlich für die
-                Werkstattverwaltung zugänglich. Eine Weitergabe an
-                sonstige Dritte findet nicht statt.{" "}
-                <span className="text-muted-foreground">
-                  [Hinweis für den Betreiber: Vor dem Live-Betrieb einen
-                  Auftragsverarbeitungsvertrag mit Supabase abschließen
-                  und den Serverstandort hier ergänzen.]
-                </span>
+                Werkstattverwaltung zugänglich. Die Datenbank wird von der
+                Supabase, Inc. (USA) als Auftragsverarbeiter betrieben; der
+                Serverstandort ist Frankfurt am Main (Deutschland). Für
+                Support- und Wartungszugriffe aus den USA gelten
+                EU-Standardvertragsklauseln. Eine Weitergabe an sonstige
+                Dritte findet nicht statt.
               </p>
               <p className="mt-2">
                 Der optional herunterladbare Kalendereintrag (.ics-Datei)
@@ -140,19 +142,15 @@ export default function DatenschutzPage() {
               </p>
               <p className="mt-2">
                 Zur Erzeugung der Antworten werden die Nachrichten an den
-                KI-Anbieter Anthropic PBC übermittelt, der sie als
-                Auftragsverarbeiter verarbeitet. Daten von anderen Kunden
+                KI-Anbieter Anthropic Ireland, Limited (Dublin, Irland)
+                übermittelt, der sie als Auftragsverarbeiter verarbeitet.
+                Die Verarbeitung kann auf Servern der Muttergesellschaft
+                Anthropic, PBC in den USA erfolgen; dafür gelten
+                EU-Standardvertragsklauseln. Die Nachrichten werden vom
+                Anbieter nicht zum Training von KI-Modellen verwendet. Daten von anderen Kunden
                 oder bestehende Buchungen kann der Assistent nicht abrufen.
                 Eine automatisierte Entscheidung mit rechtlicher Wirkung
-                (Art. 22 DSGVO) findet nicht statt.{" "}
-                <span className="text-muted-foreground">
-                  [Hinweis für den Betreiber: Vor dem Live-Betrieb den
-                  Auftragsverarbeitungsvertrag mit Anthropic abschließen,
-                  Verarbeitungsort und Garantien für die Übermittlung in
-                  Drittländer (z. B. EU-Standardvertragsklauseln) hier
-                  ergänzen – oder einen EU-Betrieb über Amazon Bedrock bzw.
-                  Google Vertex AI wählen.]
-                </span>
+                (Art. 22 DSGVO) findet nicht statt.
               </p>
             </section>
 
@@ -182,13 +180,26 @@ export default function DatenschutzPage() {
                 Englisch, übersetzen wir unsere Nachrichtenvorlagen mit Hilfe
                 von KI (Anthropic) in Ihre Sprache; dabei werden nur die
                 Vorlagentexte übermittelt, keine Daten über Sie. Gesendete
-                Nachrichten werden nach 180 Tagen gelöscht.{" "}
-                <span className="text-muted-foreground">
-                  [Hinweis für den Betreiber: Eingesetzte Versanddienstleister
-                  (z. B. E-Mail: Resend, SMS: Twilio, WhatsApp: Meta Platforms
-                  Ireland) mit Sitz, Auftragsverarbeitungsvertrag und
-                  Drittlandgarantien hier ergänzen.]
-                </span>
+                Nachrichten werden nach 180 Tagen gelöscht.
+              </p>
+              <p className="mt-2">
+                Für den Versand setzen wir folgende Dienstleister als
+                Auftragsverarbeiter ein, die Name, E-Mail-Adresse bzw.
+                Telefonnummer und den Nachrichtentext erhalten:
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                <li>
+                  E-Mail: Resend (Plus Five Five, Inc., San Francisco, USA)
+                </li>
+                <li>SMS: Twilio Ireland Limited (Dublin, Irland)</li>
+                <li>WhatsApp: Meta Platforms Ireland Limited (Dublin, Irland)</li>
+              </ul>
+              <p className="mt-2">
+                Mit allen Dienstleistern bestehen Auftragsverarbeitungsverträge
+                nach Art. 28 DSGVO. Soweit Daten in die USA übermittelt werden
+                (Resend sowie die Muttergesellschaften von Twilio und Meta),
+                erfolgt dies auf Grundlage des EU-US Data Privacy Framework und
+                der EU-Standardvertragsklauseln.
               </p>
             </section>
 
