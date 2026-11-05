@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { MessageCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,14 @@ const ChatPanel = dynamic(() => import("./chat-panel").then((m) => m.ChatPanel),
 
 export function AssistantLauncher({ workshopName }: { workshopName: string }) {
   const [open, setOpen] = useState(false);
+
+  // Link from the phone assistant's SMS (/?chat=1&lang=ku): open the chat
+  // right away so the caller can continue in writing in their language.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("chat") !== "1") return;
+    const t = setTimeout(() => setOpen(true), 0);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <>
