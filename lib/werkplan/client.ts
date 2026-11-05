@@ -18,6 +18,7 @@ export type ApiService = {
   durationMinutes: number;
   priceMinCents: number;
   priceMaxCents: number | null;
+  depositCents?: number | null;
 };
 
 export type WorkshopInfo = {
@@ -66,6 +67,7 @@ export type BookingResult = {
   startsAt: string;
   endsAt: string;
   services: { nameDe: string; nameEn: string }[];
+  deposit?: { amountCents: number; payUrl: string } | null;
 };
 
 export class WerkplanApiError extends Error {

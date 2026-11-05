@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, CheckCircle2, Clock, Download, Gauge } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock, CreditCard, Download, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildIcsContent, downloadIcsFile } from "@/lib/booking/ics";
 import { formatFullDateLabel } from "@/lib/booking/slots";
@@ -83,6 +83,26 @@ export function StepConfirmation({
           </span>
         </div>
       </div>
+
+      {confirmation.deposit && (
+        <div className="mx-auto mt-6 max-w-sm space-y-3 rounded-xl border border-primary/40 p-4 text-left text-sm">
+          <p className="font-medium">
+            Bitte leisten Sie eine Anzahlung von{" "}
+            {(confirmation.deposit.amountCents / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}.
+          </p>
+          <p className="text-muted-foreground">
+            Sie wird mit der Rechnung verrechnet und bei rechtzeitiger Absage vollständig erstattet. Den Link erhalten Sie
+            auch per E-Mail.
+          </p>
+          <a
+            href={confirmation.deposit.payUrl}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/60"
+          >
+            <CreditCard className="size-4" aria-hidden="true" />
+            Anzahlung jetzt bezahlen
+          </a>
+        </div>
+      )}
 
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Button size="lg" className="w-full gap-2 sm:w-auto" onClick={handleDownload}>

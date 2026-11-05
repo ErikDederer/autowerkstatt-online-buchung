@@ -102,6 +102,7 @@ export function StepContact({
         status: result.result.status,
         startsAt: result.result.startsAt,
         endsAt: result.result.endsAt,
+        deposit: result.result.deposit ?? null,
       });
     } else {
       setSubmitError(result.message);

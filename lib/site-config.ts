@@ -33,6 +33,8 @@ export type Service = {
   priceLabel: string;
   /** Used to size slots in the online booking flow. */
   durationMinutes: number;
+  /** Deposit due at online booking (from WerkPlan), in EUR. */
+  depositEuro?: number | null;
 };
 
 export type FaqItem = {

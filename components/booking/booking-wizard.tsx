@@ -19,6 +19,7 @@ export type BookingConfirmation = {
   status: "booked" | "requested";
   startsAt: string;
   endsAt: string;
+  deposit?: { amountCents: number; payUrl: string } | null;
 };
 
 type WizardProps = {
