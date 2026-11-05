@@ -155,6 +155,22 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
+              <h2 className="text-base font-semibold">4a-1. Foto des Fahrzeugscheins (optional)</h2>
+              <p className="mt-2">
+                Bei der Buchung können Sie ein Foto der Zulassungsbescheinigung Teil I
+                hochladen. Ein KI-System (Anthropic, siehe oben) liest daraus nur
+                Fahrzeugdaten aus: Kennzeichen, Fahrzeug-Identifizierungsnummer,
+                Hersteller- und Typschlüssel, Marke, Modell und Erstzulassung. Halter
+                und Anschrift werden nicht übernommen. Sie prüfen die Felder vor dem
+                Absenden. Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a
+                DSGVO). Das Foto liegt in einem nicht öffentlichen Speicher in der EU
+                (Frankfurt) und wird spätestens 30 Tage nach der Bestätigung gelöscht,
+                ohne Buchung nach 24 Stunden. Sie können die Einwilligung jederzeit
+                widerrufen.
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-base font-semibold">4b. Terminnachrichten und Erinnerungen</h2>
               <p className="mt-2">
                 Zu Ihrem Termin erhalten Sie eine Bestätigung, eine Erinnerung
