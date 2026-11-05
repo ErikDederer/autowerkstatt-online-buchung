@@ -25,6 +25,7 @@ type WizardProps = {
   /** Live catalog from WerkPlan; `id` is WerkPlan's service id. */
   services: (Service & { slug?: string })[];
   bookingMode: "instant" | "request";
+  documentScanEnabled?: boolean;
 };
 
 /**
@@ -42,6 +43,7 @@ export function BookingWizardFromLink(props: WizardProps) {
 export function BookingWizard({
   services,
   bookingMode,
+  documentScanEnabled = false,
   initialServiceId,
 }: WizardProps & { initialServiceId?: string }) {
   const [step, setStep] = useState<WizardStep>(initialServiceId ? 2 : 1);
@@ -98,6 +100,7 @@ export function BookingWizard({
           service={service}
           slot={slot}
           bookingMode={bookingMode}
+          documentScanEnabled={documentScanEnabled}
           onBack={() => setStep(2)}
           onEditService={() => setStep(1)}
           onEditDateTime={() => setStep(2)}

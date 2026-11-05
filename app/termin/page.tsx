@@ -40,8 +40,8 @@ export default async function TerminPage() {
 
           <div className="mt-10">
             {catalog.live ? (
-              <Suspense fallback={<BookingWizard services={catalog.services} bookingMode={catalog.bookingMode} />}>
-                <BookingWizardFromLink services={catalog.services} bookingMode={catalog.bookingMode} />
+              <Suspense fallback={<BookingWizard services={catalog.services} bookingMode={catalog.bookingMode} documentScanEnabled={catalog.documentScanEnabled} />}>
+                <BookingWizardFromLink services={catalog.services} bookingMode={catalog.bookingMode} documentScanEnabled={catalog.documentScanEnabled} />
               </Suspense>
             ) : (
               <div role="status" className="rounded-2xl border bg-card p-8 text-center">
