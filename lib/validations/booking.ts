@@ -59,6 +59,10 @@ export const bookingRequestSchema = z.object({
   // browser/password-manager autofill would otherwise block the submit with
   // an error on an invisible field. The server action checks it instead.
   honeypot: z.string().optional(),
+  // Filled by the Fahrzeugschein scan (optional; the customer checked the fields).
+  documentScanId: z.uuid().optional().or(z.literal("")),
+  hsn: z.string().regex(/^\d{4}$/).optional().or(z.literal("")),
+  tsn: z.string().regex(/^[A-Z0-9]{3}$/i).optional().or(z.literal("")),
 });
 
 export type BookingRequestValues = z.infer<typeof bookingRequestSchema>;
@@ -76,6 +80,9 @@ export const bookingContactSchema = bookingRequestSchema.pick({
   remindersOptIn: true,
   marketingOptIn: true,
   honeypot: true,
+  documentScanId: true,
+  hsn: true,
+  tsn: true,
 });
 
 export type BookingContactValues = z.infer<typeof bookingContactSchema>;
