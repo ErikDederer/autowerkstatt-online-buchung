@@ -33,6 +33,8 @@ export type WorkshopInfo = {
   booking: { mode: "instant" | "request"; minLeadMinutes: number; horizonDays: number; slotStepMinutes: number };
   /** Whether the workshop's plan includes the AI chat assistant. */
   assistantEnabled?: boolean;
+  /** Whether customers may scan their Fahrzeugschein while booking. */
+  documentScanEnabled?: boolean;
 };
 
 export type ApiSlot = { date: string; time: string; startsAt: string };
@@ -51,6 +53,8 @@ export type BookingPayload = {
   };
   notes?: string | null;
   preferredLanguage?: string;
+  /** Scan whose (checked) data the customer submitted. */
+  documentScanId?: string | null;
   consents?: { reminders: ("email" | "sms" | "whatsapp")[]; marketing: ("email" | "sms" | "whatsapp")[] };
 };
 
@@ -187,4 +191,47 @@ export function getChatTranscript(conversationId: string, token: string, endUser
     endUserIp,
     headers: { "x-chat-token": token },
   });
+}
+
+// --- Fahrzeugschein scan ------------------------------------------------------
+
+export type RegistrationFields = {
+  licensePlate?: string | null;
+  vin?: string | null;
+  hsn?: string | null;
+  tsn?: string | null;
+  make?: string | null;
+  model?: string | null;
+  firstRegistration?: string | null;
+};
+
+export type ScanResult = {
+  scanId: string;
+  status: "extracted" | "failed" | "offline";
+  fields: RegistrationFields;
+  message: string | null;
+};
+
+/** Multipart upload, so not through call() (which sends JSON). */
+export async function scanRegistration(file: File, endUserIp: string): Promise<ScanResult> {
+  const { url, key } = config();
+  const form = new FormData();
+  form.append("file", file, file.name || "fahrzeugschein.jpg");
+  let response: Response;
+  try {
+    response = await fetch(`${url}/api/public/v1/document-scans`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "x-end-user-ip": endUserIp },
+      body: form,
+      cache: "no-store",
+      signal: AbortSignal.timeout(60_000),
+    });
+  } catch {
+    throw new WerkplanApiError(503, "unreachable", "Der Dienst ist gerade nicht erreichbar.");
+  }
+  const body = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new WerkplanApiError(response.status, body?.error?.code ?? "unknown", body?.error?.message ?? "Unbekannter Fehler.");
+  }
+  return body as ScanResult;
 }

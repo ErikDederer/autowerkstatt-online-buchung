@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { WizardNav } from "@/components/booking/wizard-nav";
 import { HsnTsnLookup } from "@/components/booking/hsn-tsn-lookup";
+import { RegistrationScan } from "@/components/booking/registration-scan";
 import { bookingContactSchema, type BookingContactValues } from "@/lib/validations/booking";
 import { submitBookingRequest } from "@/lib/actions/booking";
 import { formatFullDateLabel, toDayOption } from "@/lib/booking/slots";
@@ -20,6 +21,7 @@ export type StepContactProps = {
   service: Service;
   slot: ChosenSlot;
   bookingMode: "instant" | "request";
+  documentScanEnabled?: boolean;
   onBack: () => void;
   onEditService: () => void;
   onEditDateTime: () => void;
@@ -46,12 +48,16 @@ const defaultValues: BookingContactValues = {
   remindersOptIn: false,
   marketingOptIn: false,
   honeypot: "",
+  documentScanId: "",
+  hsn: "",
+  tsn: "",
 };
 
 export function StepContact({
   service,
   slot,
   bookingMode,
+  documentScanEnabled = false,
   onBack,
   onEditService,
   onEditDateTime,
@@ -191,6 +197,20 @@ export function StepContact({
 
         <div className="space-y-4 border-t pt-5">
           <h3 className="text-sm font-semibold uppercase tracking-wide">Fahrzeugdaten</h3>
+
+          {documentScanEnabled && (
+            <RegistrationScan
+              onScanned={(scanId, f) => {
+                setValue("documentScanId", scanId);
+                const opts = { shouldValidate: true, shouldDirty: true };
+                if (f.make) setValue("vehicleMake", f.make, opts);
+                if (f.model) setValue("vehicleModel", f.model, opts);
+                if (f.licensePlate) setValue("licensePlate", f.licensePlate, opts);
+                if (f.hsn) setValue("hsn", f.hsn);
+                if (f.tsn) setValue("tsn", f.tsn);
+              }}
+            />
+          )}
 
           <HsnTsnLookup
             onDecoded={({ make, model }) => {

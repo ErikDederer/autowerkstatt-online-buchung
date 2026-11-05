@@ -67,6 +67,7 @@ export type SiteCatalog = {
   openingHours: OpeningHoursRow[];
   bookingMode: "instant" | "request";
   assistantEnabled: boolean;
+  documentScanEnabled: boolean;
   /** false → WerkPlan unreachable; pages fall back to site-config content. */
   live: boolean;
 };
@@ -83,6 +84,7 @@ export async function getSiteCatalog(): Promise<SiteCatalog> {
       openingHours: openingHoursRows(info),
       bookingMode: info.booking.mode,
       assistantEnabled: info.assistantEnabled ?? false,
+      documentScanEnabled: info.documentScanEnabled ?? false,
       live: true,
     };
   } catch {
@@ -91,6 +93,7 @@ export async function getSiteCatalog(): Promise<SiteCatalog> {
       openingHours: [...siteConfig.openingHours],
       bookingMode: "request",
       assistantEnabled: false,
+      documentScanEnabled: false,
       live: false,
     };
   }

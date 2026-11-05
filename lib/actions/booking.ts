@@ -82,7 +82,10 @@ export async function submitBookingRequest(values: BookingRequestValues): Promis
           make: data.vehicleMake,
           model: data.vehicleModel,
           mileageKm: Number(data.mileageKm),
+          hsn: data.hsn || null,
+          tsn: data.tsn ? data.tsn.toUpperCase() : null,
         },
+        documentScanId: data.documentScanId || null,
         notes: data.notes || null,
         preferredLanguage: "de",
         consents: {
