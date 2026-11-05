@@ -13,10 +13,13 @@ Deutschsprachiges Portfolio-Projekt für eine Werkstatt-Website mit Online-Termi
 - Client- und serverseitige Formularvalidierung mit React Hook Form und Zod.
 - Bestätigungsansicht und Download eines Kalendereintrags im ICS-Format (UTC-Zeiten).
 - KI-Chat „Termin per Chat“ (wenn der Tarif der Werkstatt ihn enthält): erkennt das Anliegen, nennt Dauer und Preisrahmen aus dem Katalog, bietet freie Termine als Buttons an und bucht. Antwortet in der Sprache des Kunden (Arabisch/Persisch rechts-nach-links), weist sich als KI aus und übergibt im Zweifel an das Team. Das Chatfenster wird erst beim Öffnen geladen.
+- **Fahrzeugschein fotografieren** (wenn der Tarif es enthält): Foto der Zulassungsbescheinigung Teil I → WerkPlan liest per KI Kennzeichen, Marke, Modell, HSN/TSN; der Kunde prüft die Felder vor dem Absenden. Halterdaten werden nicht übernommen, das Bild wird nach der Aufbewahrungsfrist gelöscht. Musterbild: `../werkplan/public/demo-media/documents/fahrzeugschein-muster.jpg`.
+- **Anzahlung** für lange/teure Leistungen (z. B. Zahnriemen): im Leistungsschritt angezeigt, nach der Buchung Button „Anzahlung jetzt bezahlen“ (Stripe Checkout bzw. Testzahlung in der Demo); der Link kommt zusätzlich per E-Mail.
+- **Chat-Link vom Telefonassistenten**: `/?chat=1&lang=<code>` öffnet den Chat sofort (SMS an Anrufer, deren Sprache am Telefon nicht verfügbar ist).
 - Kleine lokale HSN/TSN-Beispieltabelle zur Fahrzeugauswahl.
 - Gemeinsames Datenmodell für die Weiterverarbeitung in WerkPlan.
 
-E-Mail-Versand und SMS-Erinnerungen folgen in Phase 3 (Benachrichtigungsmodul in WerkPlan). Die separate Kontaktform prüft Eingaben als Demo, speichert oder protokolliert sie nicht und versendet keine Nachricht.
+Bestätigungen, Erinnerungen, Freigabe- und Anzahlungslinks verschickt WerkPlan (Outbox, in der Sprache des Kunden). Die separate Kontaktform prüft Eingaben als Demo, speichert oder protokolliert sie nicht und versendet keine Nachricht.
 
 ## Technik
 
@@ -59,6 +62,11 @@ WerkPlan ([../werkplan](../werkplan)) ist das Backend der Plattform. Die Website
 | `GET /api/public/v1/slots` | freie Startzeiten für die gewählte Leistung |
 | `POST /api/public/v1/bookings` | Buchung bzw. Anfrage; `409` mit Alternativen, wenn der Termin vergeben ist |
 | `POST/GET /api/public/v1/chat` | KI-Assistent: Nachricht senden bzw. Verlauf wiederherstellen (über den Proxy `/api/chat`) |
+| `POST /api/public/v1/document-scans` | Foto des Fahrzeugscheins → ausgelesene Felder + `scanId` (multipart, über die Server Action `scanVehicleDocument`) |
+
+`GET /workshop` liefert zusätzlich `documentScanEnabled` und je Leistung `depositCents`; `POST /bookings` nimmt optional `documentScanId` und antwortet bei Anzahlungspflicht mit `deposit: { amountCents, payUrl }`.
+
+**Tarif „Nur Website“:** Dieselbe Website funktioniert für eine Werkstatt ohne WerkPlan-Oberfläche – nur der Website-Schlüssel ist ein anderer. Buchungen landen per Kalender-Abo oder E-Mail mit .ics im System der Werkstatt (siehe WerkPlan → Kalender-Anbindung). Zum Ausprobieren: in WerkPlan `npx tsx scripts/rotate-site-key.ts kfz-service-ostend` und den Schlüssel in einer zweiten Instanz dieser Website als `WERKPLAN_API_KEY` setzen.
 
 In `.env.local`:
 
@@ -96,6 +104,14 @@ npm run build
 ```
 
 `npm run build` ersetzt die separate Lint-Prüfung nicht. Der Build lädt die verwendeten Google Fonts über `next/font` und benötigt dafür Netzwerkzugriff. Ein automatisiertes Testskript ist derzeit nicht eingerichtet.
+
+## Demo (2 Minuten, Website-Teil)
+
+1. `/termin` → „Zahnriemenwechsel inkl. Wasserpumpe“ (Anzahlung 100 € ist angezeigt) → Termin wählen.
+2. Bei den Fahrzeugdaten „Fahrzeugschein fotografieren“ → Einwilligung anhaken → Musterbild wählen → Felder werden ausgefüllt.
+3. Buchen → Bestätigung mit „Anzahlung jetzt bezahlen“ → Testzahlung bestätigen → „Anzahlung eingegangen“.
+4. Chat-Button → auf Türkisch fragen → Antwort auf Türkisch mit Katalogpreisen.
+5. `/?chat=1&lang=ku` öffnet den Chat direkt (so kommt der SMS-Link nach einem Anruf an).
 
 ## Grenzen und nächste Schritte
 
