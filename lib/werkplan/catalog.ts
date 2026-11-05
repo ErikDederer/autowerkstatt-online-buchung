@@ -40,6 +40,7 @@ function toService(s: ApiService): BookableService {
     priceFrom: euros(s.priceMinCents),
     priceLabel: priceLabel(s.priceMinCents, s.priceMaxCents),
     durationMinutes: s.durationMinutes,
+    depositEuro: s.depositCents ? euros(s.depositCents) : null,
   };
 }
 

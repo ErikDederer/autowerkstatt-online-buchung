@@ -65,6 +65,7 @@ export function StepService({ services, selectedServiceId, onSelect, onNext }: S
                 <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock className="size-3.5" aria-hidden="true" />
                   ca. {service.durationMinutes} Min.
+                  {service.depositEuro ? ` · Anzahlung ${service.depositEuro} €` : ""}
                 </div>
               </div>
             </button>

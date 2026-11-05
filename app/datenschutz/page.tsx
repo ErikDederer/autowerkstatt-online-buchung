@@ -171,6 +171,19 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
+              <h2 className="text-base font-semibold">4a-2. Anzahlungen</h2>
+              <p className="mt-2">
+                Für einzelne lange oder teure Leistungen bitten wir um eine Anzahlung. Die
+                Zahlung wickelt Stripe Payments Europe, Ltd. (Dublin, Irland) ab; Ihre
+                Karten- oder Kontodaten gibt Stripe nicht an uns weiter. Wir erhalten nur
+                Betrag, Zeitpunkt und Zahlungsreferenz. Rechtsgrundlage ist die
+                Vertragsabwicklung (Art. 6 Abs. 1 lit. b DSGVO). Bei rechtzeitiger Absage
+                wird die Anzahlung erstattet; die Buchungsbelege bewahren wir nach den
+                handels- und steuerrechtlichen Fristen auf.
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-base font-semibold">4b. Terminnachrichten und Erinnerungen</h2>
               <p className="mt-2">
                 Zu Ihrem Termin erhalten Sie eine Bestätigung, eine Erinnerung
